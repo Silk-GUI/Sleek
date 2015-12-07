@@ -1,0 +1,10 @@
+{
+	"name": "Sleek Window Manager",
+	"url": "index.html",
+	"bowerDependencies": {
+		"vue": "~0.11.0",
+		"jquery": "~2.1.1",
+		"color-thief": "*",
+		"hint.css": "*"
+	}
+}
