@@ -1,12 +1,14 @@
 // channel for each window
+var Channel = require('jschannel');
+var $ = require('jquery');
+var WindowManager = require('./window_manager.js');
 var channels = {};
 
 function CreateChannel(index) {
-  var app = windows[index];
+  var app = WindowManager.windows[index];
   app.running = true;
   var windowName = app.title;
-  // allow html to be updated
-  console.log(windowName);
+
   chan = Channel.build({
     window: $("#desktop .window iframe[data-name='" + windowName + "']")[0].contentWindow,
     origin: "*",
@@ -14,46 +16,51 @@ function CreateChannel(index) {
     onReady: function () {
       console.log("channel is ready!");
       console.log("ready");
-
     }
-  })
+  });
 
   chan.bind("openFile", function (context, params) {
-    console.log("=============")
+    console.log("=============");
     console.log(context);
     console.log(params);
 
     // open text editor and include path in url
     // find text editor
 
-    methods.call("Silk/appDefaults", params.mime, function (err, data) {
-      if(err){
-        alert(err);
-        return;
-      }
+    DocumentHost.get("Silk/appDefaults", params.mime).then(function (data) {
       function openWindow(title) {
-        // get app's json
-        var app = appFromName(title);
-        // clone app to not change origional url
-        app = JSON.parse(JSON.stringify(app));
-        app.url = app.url + '?file=' + encodeURIComponent(params.path);
-        try {
-          var win = new Win(app, windows, windowOrder);
-          win.start();
-          win.open();
-        } catch (e) {
-          alert('error opening file');
+        // get app id
+        var apps = WindowManager.appData;
+        var app;
+        for(var i = 0; i < apps.length; i++) {
+          app = apps[i];
+          if(app.title === title) {
+            break;
+          }
         }
+        app.url = app.url + '?file=' + encodeURIComponent(params.path);
+        WindowManager.open(app.id, app);
+
+        // clone app to not change original url
+        //app = JSON.parse(JSON.stringify(app));
+        //app.url = app.url + '?file=' + encodeURIComponent(params.path);
+        //try {
+        //  var win = new Win(app, windows, windowOrder);
+        //  win.start();
+        //  win.open();
+        //} catch (e) {
+        //  alert('error opening file');
+        //}
       }
 
       console.log(data);
 
       // open using default program
-      if (data.default !== "") {
+      if(data.default !== "") {
         openWindow(data.default);
       }
-      // if one app use it if it is not for *.
-      else if (data.available.length < 2 && data.mime != "*") {
+      // if one app, use it if it is not for *.
+      else if(data.available.length < 2 && data.mime != "*") {
         openWindow(data.available[0]);
       }
       // let user choose program
@@ -79,19 +86,24 @@ function CreateChannel(index) {
           console.log($(e.target).html());
           openWindow($(e.target).html());
           // if chewckbox is checked, set up default app
-          if ($('#appNotifications input').is(':checked') == true) {
-            methods.call("Silk/setDefault", {
+          if($('#appNotifications input').is(':checked') == true) {
+            DocumentHost.get("Silk/setDefault", {
               mime: params.mime,
               app: $(e.target).html()
-            }, function () {})
+            }).then(function () {
+            });
           }
           $("#appNotifications").css("display", "none");
           $("#appNotifications").html("");
         });
       }
-    });
+    })
+    .catch(console.error);
 
   });
 
   channels[windowName] = chan;
 }
+
+module.exports = CreateChannel;
+module.exports.channels = channels;
