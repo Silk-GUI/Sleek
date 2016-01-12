@@ -5,7 +5,7 @@ var apps = [],
   taskbar,
   menu;
 
-// returns app json for app name 
+// returns app json for app name
 var appFromName = function (name) {
   for(var i = 0; i < apps.length; ++i) {
     if(apps[i].name === name){
@@ -51,7 +51,7 @@ function initializeManager(appList) {
   });
 
   taskbar = new Vue({
-    el: '#taskbar',
+    el: '#taskBar',
     data: {
       programs: windows
     },

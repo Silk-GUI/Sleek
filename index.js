@@ -1,6 +1,6 @@
 Silk.methods.add({
 	'sleek/apps': function (data, call_obj, send) {
-		return Silk.api.listen('apps/list', {}, function (err, data) {
+		return Silk.api.listen('apps/state', {}, function (err, data) {
 			send(null, data);
 		});
 	}

@@ -56,7 +56,7 @@ span:nth-child(4) {
 }
 /* Task Bar */
 
-#taskbar {
+#taskBar {
 -webkit-user-select: none;
 z-index: 500;
 position: fixed;
@@ -70,10 +70,10 @@ transition: .3s opacity;
 border-top: 3px solid #FFF;
 box-sizing: border-box;
 }
-#taskbar *{
+#taskBar *{
   -webkit-user-select: none;
 }
-#taskbar .app {
+#taskBar .app {
   display: inline-block;
   height: 50px;
   padding: 0px;
@@ -83,91 +83,18 @@ box-sizing: border-box;
   border-top: 3px solid transparent;
   cursor: pointer;
 }
-#taskbar .app:hover {
+#taskBar .app:hover {
   background-color: rgba(255, 255, 255, 0.3);
 }
-#taskbar .app img {
+#taskBar .app img {
   height: 40px;
   margin-top: 2px;
   margin-left: 5px;
 }
 /* Windows */
 
-#desktop .window {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  padding-bottom: 55px;
-  padding-top: 25px;
-}
-.window *{
-  -webkit-user-select: none;
-}
-#desktop .window .title {
-  text-align: center;
-  margin-top: -25px;
-  width: 100%;
-  background-color: rgb(69, 159, 224);
-  height: 30px;
-  padding-top: 7px;
-  box-sizing: border-box;
-  cursor: default;
-  font-weight: 300;
-}
-.window .title .minimize {
-  display: inline-block;
-  position: absolute;
-  right: 30px;
-  box-sizing: border-box;
-  top: 0px;
-  color: rgb(255, 255, 255);
-  font-size: 16px;
-  margin-top: 0px;
-  padding: 0px;
-  width: 30px;
-  height: 30px;
-  padding-top: 5px;
-  background-color: rgba(24, 70, 140, 0.57);
-  cursor: pointer;
-  -webkit-transition: .2s all;
-}
-.window .title .minimize:hover{
-  background-color: rgba(24, 70, 140, 0.32);
-}
-.window .title .close {
-  display: inline-block;
-  position: absolute;
-  right: 0px;
-  padding: 0px;
-  box-sizing: border-box;
-  top: 0px;
-  color: rgb(255, 255, 255);
-  font-size: 16px;
-  margin-top: 0px;
-  padding: 0px;
-  width: 30px;
-  height: 30px;
-  padding-top: 6px;
-  background-color: rgba(16, 67, 103, 0.72);
-  font-weight: 300;
-  cursor: pointer;
-  -webkit-transition: .2s background-color;
-}
-.window .title .close:hover {
-background-color: #B01717;
-}
-#desktop .window iframe {
-  background-color: white;
-  border: none;
-  width: 100%;
-  height: 100%;
-  margin: 0px;
-  box-sizing: border-box;
-}
-#taskbar .app.running {
+
+#taskBar .app.running {
   border-top: 4px solid rgb(255, 255, 255);
 }
 /* Desktop */
@@ -240,12 +167,12 @@ width: 100%;
 background-color: rgba(255, 255, 255, 0.8);
 height: auto;
 color: #3A3939;
-display: none;
+display: block;
 z-index: 201;
 box-sizing: border-box;
 padding: 0px;
   -webkit-user-select: one;
-  opacity: 0;
+  opacity: 1;
   margin-bottom: 50px;
 }
 #menu h1 {
@@ -299,14 +226,14 @@ height: 30px;
 box-shadow: 0px 3px 0px #459FE0;
 }
 
-#taskbar .app.menu {
+#taskBar .app.menu {
 border-top: 0px;
 background-color: #459FE0;
 vertical-align: top;
 padding-top: 3px;
 margin-right: -4px;
 }
-#taskbar .app.menu:hover{
+#taskBar .app.menu:hover{
   background-color: #1E5C88;
 }
 
