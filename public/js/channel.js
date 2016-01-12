@@ -1,7 +1,7 @@
 // channel for each window
 var Channel = require('jschannel');
 var $ = require('jquery');
-var WindowManager = require('./window_manager_2.js');
+var WindowManager = require('./window_manager.js');
 var channels = {};
 
 function CreateChannel(index) {

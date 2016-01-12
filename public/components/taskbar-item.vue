@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import WindowManager from '../js/window_manager_2';
+  import WindowManager from '../js/window_manager';
  export default {
    data() {
      return {

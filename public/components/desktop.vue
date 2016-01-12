@@ -9,7 +9,7 @@
 </template>
 
 <script>
-  import WindowManager from '../js/window_manager_2';
+  import WindowManager from '../js/window_manager';
   import Channel from '../js/channel';
 
   export default {

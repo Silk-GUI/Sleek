@@ -11,7 +11,7 @@
 
 <script>
   import Menu from '../js/menu.js';
-  var WindowManager = require('../js/window_manager_2');
+  var WindowManager = require('../js/window_manager');
   export default {
     data () {
       return {

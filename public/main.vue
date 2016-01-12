@@ -3,6 +3,7 @@
   <div v-if="!ready" transition="fade">
     <load-screen></load-screen>
   </div>
+
   <menu></menu>
   <taskbar></taskbar>
   <desktop></desktop>
@@ -16,7 +17,7 @@
   import Menu from './components/menu.vue';
   import load from './js/load.js';
   import desktop from './components/desktop.vue';
-  import {default as WindowManager} from './js/window_manager_2.js';
+  import {default as WindowManager} from './js/window_manager.js';
   export default {
     data() {
       return {

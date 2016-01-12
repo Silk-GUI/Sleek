@@ -12,7 +12,7 @@
 </template>
 
 <script>
-  import {default as WindowManager} from '../js/window_manager_2';
+  import {default as WindowManager} from '../js/window_manager';
   import {default as Menu} from '../js/menu.js';
   import clock from './clock.vue';
   import taskBarItem from './taskbar-item.vue';
