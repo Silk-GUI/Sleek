@@ -1,6 +1,8 @@
 var Vue = require('vue');
 var isDebug = require('./js/debug.js')();
+var VueAsyncData = require('vue-async-data');
 
+Vue.use(VueAsyncData);
 
 if(isDebug) {
   /**

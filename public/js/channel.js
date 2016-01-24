@@ -17,7 +17,7 @@ function CreateChannel(index) {
   WinAbs.call(self, context);
 
   for(var key in clientAPI) {
-    this.add(key, clientAPI[key]);
+    this.add(key, clientAPI[key].bind(app));
   }
 
   channels[app.windowId] = this;

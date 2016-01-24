@@ -1,5 +1,6 @@
 // API available to apps
 var WindowManager = require('./window_manager.js');
+var FileExplorer = require('./file_explorer.js');
 
 module.exports = {
   open (params) {
@@ -82,5 +83,25 @@ module.exports = {
         }
       })
       .catch(console.error);
+  },
+  'filePicker': function (params, message, send) {
+
+    function indexFromId(list, id) {
+      for(var i = 0; i < list.length; i++) {
+        if(list[i].id === id) {
+          return i;
+        }
+      }
+    }
+
+    console.log('filePicker');
+    console.log(this);
+    var self = this;
+    var fileExplorer = new FileExplorer(this, function (e, d) {
+      var index = indexFromId(fileExplorer.id);
+      self.popups.splice(index, 1);
+      send(e, d);
+    });
+    self.popups.push(fileExplorer);
   }
 };

@@ -3,6 +3,9 @@
     <div v-for="window in windows" class="window" v-show="!window.minimized" :style="{zIndex: window.zIndex}">
       <iframe v-if="window.running" class="content" @load="buildChannel($index)" :src="window.url"
               data-name="{{window.title}}"></iframe>
+      <div class="popup" v-if="window.popups" v-for="popup in window.popups">
+        <component :popup="popup" :is="popup.component"></component>
+      </div>
     </div>
     <div id="appNotifications"></div>
   </div>
@@ -11,6 +14,9 @@
 <script>
   import WindowManager from '../js/window_manager';
   import Channel from '../js/channel';
+
+  //popups
+  import FileExplorer from './fileExplorer.vue';
 
   export default {
     data() {
@@ -29,6 +35,9 @@
       close (index) {
         WindowManager.closeWindow(index);
       }
+    },
+    components: {
+      'file-explorer': FileExplorer
     }
   };
 </script>
@@ -48,12 +57,31 @@
     -webkit-user-select: none;
   }
 
-  #desktop .window iframe {
+  iframe {
     background-color: white;
     border: none;
     width: 100%;
     height: 100%;
     margin: 0px;
     box-sizing: border-box;
+  }
+
+  .window .popup {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(256, 256, 256, 0.5);
+  }
+
+  .window .popup .content {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    width: 500px;
+    height: 300px;
+    margin-left: -250px;
+    background-color: red;
   }
 </style>

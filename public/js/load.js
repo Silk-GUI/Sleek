@@ -1,5 +1,6 @@
 var remote = require('./remote.js');
 var debug = require('./debug.js')();
+var $ = require('jquery');
 
 module.exports = {};
 module.exports.load = function load(callback) {
