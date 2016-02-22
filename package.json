@@ -29,6 +29,7 @@
     "jquery": "^2.1.4",
     "jschannel": "^1.0.0",
     "queryjs": "0.0.1",
-    "vue": "^1.0.13"
+    "vue": "^1.0.13",
+    "vue-async-data": "^1.0.2"
   }
 }

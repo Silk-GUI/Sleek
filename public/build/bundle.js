@@ -46,6 +46,9 @@
 
 	var Vue = __webpack_require__(1);
 	var isDebug = __webpack_require__(3)();
+	var VueAsyncData = __webpack_require__(5);
+	
+	Vue.use(VueAsyncData);
 	
 	if (isDebug) {
 	  /**
@@ -58,9 +61,9 @@
 	  Vue.config.debug = true;
 	}
 	
-	__webpack_require__(5);
-	__webpack_require__(9);
-	var Main = __webpack_require__(11);
+	__webpack_require__(6);
+	__webpack_require__(10);
+	var Main = __webpack_require__(12);
 	
 	new Vue({
 	  el: 'body',
@@ -9732,13 +9735,90 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
+	(function () {
+	  var vue // lazy bind
+	
+	  var asyncData = {
+	    created: function () {
+	      if (!vue) {
+	        console.warn('[vue-async-data] not installed!')
+	        return
+	      }
+	      if (this.$options.asyncData) {
+	        if (this._defineMeta) {
+	          // 0.12 compat
+	          this._defineMeta('$loadingAsyncData', true)
+	        } else {
+	          // ^1.0.0-alpha
+	          vue.util.defineReactive(this, '$loadingAsyncData', true)
+	        }
+	      }
+	    },
+	    compiled: function () {
+	      this.reloadAsyncData()
+	    },
+	    methods: {
+	      reloadAsyncData: function () {
+	        var load = this.$options.asyncData
+	        if (load) {
+	          var self = this
+	          var resolve = function (data) {
+	            if (data) {
+	              for (var key in data) {
+	                self.$set(key, data[key])
+	              }
+	            }
+	            self.$loadingAsyncData = false
+	            self.$emit('async-data')
+	          }
+	          var reject = function (reason) {
+	            var msg = '[vue] async data load failed'
+	            if (reason instanceof Error) {
+	              console.warn(msg)
+	              throw reason
+	            } else {
+	              console.warn(msg + ': ' + reason)
+	            }
+	          }
+	          this.$loadingAsyncData = true
+	          var res = load.call(this, resolve, reject)
+	          if (res && typeof res.then === 'function') {
+	            res.then(resolve, reject)
+	          }
+	        }
+	      }
+	    }
+	  }
+	
+	  var api = {
+	    mixin: asyncData,
+	    install: function (Vue, options) {
+	      vue = Vue
+	      Vue.options = Vue.util.mergeOptions(Vue.options, asyncData)
+	    }
+	  }
+	
+	  if(true) {
+	    module.exports = api
+	  } else if(typeof define === 'function' && define.amd) {
+	    define(function () { return api })
+	  } else if (typeof window !== 'undefined') {
+	    window.VueAsyncData = api
+	  }
+	})()
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(6);
+	var content = __webpack_require__(7);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(8)(content, {});
+	var update = __webpack_require__(9)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -9755,10 +9835,10 @@
 	}
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(7)();
+	exports = module.exports = __webpack_require__(8)();
 	// imports
 	
 	
@@ -9769,7 +9849,7 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	/*
@@ -9825,7 +9905,7 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -10079,16 +10159,16 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(10);
+	var content = __webpack_require__(11);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(8)(content, {});
+	var update = __webpack_require__(9)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -10105,10 +10185,10 @@
 	}
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(7)();
+	exports = module.exports = __webpack_require__(8)();
 	// imports
 	
 	
@@ -10119,12 +10199,12 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(12)
-	__vue_template__ = __webpack_require__(51)
+	__vue_script__ = __webpack_require__(13)
+	__vue_template__ = __webpack_require__(59)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
@@ -10141,7 +10221,7 @@
 	})()}
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10150,29 +10230,29 @@
 	  value: true
 	});
 	
-	__webpack_require__(13);
+	__webpack_require__(14);
 	
-	var _initialLoadScreen = __webpack_require__(15);
+	var _initialLoadScreen = __webpack_require__(16);
 	
 	var _initialLoadScreen2 = _interopRequireDefault(_initialLoadScreen);
 	
-	var _taskbar = __webpack_require__(18);
+	var _taskbar = __webpack_require__(19);
 	
 	var _taskbar2 = _interopRequireDefault(_taskbar);
 	
-	var _menu = __webpack_require__(37);
+	var _menu = __webpack_require__(38);
 	
 	var _menu2 = _interopRequireDefault(_menu);
 	
-	var _load = __webpack_require__(41);
+	var _load = __webpack_require__(42);
 	
 	var _load2 = _interopRequireDefault(_load);
 	
-	var _desktop = __webpack_require__(43);
+	var _desktop = __webpack_require__(45);
 	
 	var _desktop2 = _interopRequireDefault(_desktop);
 	
-	var _window_manager = __webpack_require__(23);
+	var _window_manager = __webpack_require__(24);
 	
 	var _window_manager2 = _interopRequireDefault(_window_manager);
 	
@@ -10212,16 +10292,16 @@
 	};
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(14);
+	var content = __webpack_require__(15);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(8)(content, {});
+	var update = __webpack_require__(9)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -10238,10 +10318,10 @@
 	}
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(7)();
+	exports = module.exports = __webpack_require__(8)();
 	// imports
 	
 	
@@ -10252,12 +10332,12 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(16)
-	__vue_template__ = __webpack_require__(17)
+	__vue_script__ = __webpack_require__(17)
+	__vue_template__ = __webpack_require__(18)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
@@ -10274,7 +10354,7 @@
 	})()}
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -10285,19 +10365,19 @@
 	exports.default = {};
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<div class=\"loader\">\n  <h1><span>S</span><span>i</span><span>l</span><span>k</span></h1>\n</div>\n\n";
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(19)
-	__vue_script__ = __webpack_require__(22)
-	__vue_template__ = __webpack_require__(35)
+	__webpack_require__(20)
+	__vue_script__ = __webpack_require__(23)
+	__vue_template__ = __webpack_require__(36)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
@@ -10314,16 +10394,16 @@
 	})()}
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(20);
+	var content = __webpack_require__(21);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(21)(content, {});
+	var update = __webpack_require__(22)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -10340,10 +10420,10 @@
 	}
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(7)();
+	exports = module.exports = __webpack_require__(8)();
 	// imports
 	
 	
@@ -10354,7 +10434,7 @@
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -10576,7 +10656,7 @@
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10585,19 +10665,19 @@
 	  value: true
 	});
 	
-	var _window_manager = __webpack_require__(23);
+	var _window_manager = __webpack_require__(24);
 	
 	var _window_manager2 = _interopRequireDefault(_window_manager);
 	
-	var _menu = __webpack_require__(24);
+	var _menu = __webpack_require__(25);
 	
 	var _menu2 = _interopRequireDefault(_menu);
 	
-	var _clock = __webpack_require__(25);
+	var _clock = __webpack_require__(26);
 	
 	var _clock2 = _interopRequireDefault(_clock);
 	
-	var _taskbarItem = __webpack_require__(30);
+	var _taskbarItem = __webpack_require__(31);
 	
 	var _taskbarItem2 = _interopRequireDefault(_taskbarItem);
 	
@@ -10639,7 +10719,7 @@
 	};
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
 	/**
@@ -10690,7 +10770,7 @@
 	 */
 	WindowManager.prototype.windowsForApp = function (appId) {
 	  var results = [];
-	  this.windows.forEach(item => {
+	  this.windows.forEach(function (item) {
 	    if (item.id === appId) {
 	      results.push(item);
 	    }
@@ -10707,7 +10787,13 @@
 	 */
 	WindowManager.prototype.open = function (id, app) {
 	  app = app || this.findAppById(id);
+	
 	  if (app.multipleWindows === false) {
+	    /* App only wants one window open at a time.
+	     * Check if app already has a window open,
+	     * and if so we make it active instead of
+	     * opening a new window.
+	     */
 	    var appWindows = this.windowsForApp(id);
 	    if (appWindows.length > 0) {
 	      // find index of first item
@@ -10727,6 +10813,7 @@
 	  win.windowId = this.windowId;
 	  this.windowId += 1;
 	  win.running = true;
+	  win.popups = [];
 	  this.windows.push(win);
 	  this.maximizeWindow(this.windows.length - 1);
 	  return win;
@@ -10752,13 +10839,14 @@
 	 * @param {number} index - index of window in window array
 	 */
 	WindowManager.prototype.maximizeWindow = function (index) {
-	  this.windows.forEach((item, index) => {
+	  var self = this;
+	  self.windows.forEach(function (item, index) {
 	    if (item.minimized === false) {
-	      this.minimizeWindow(index);
+	      self.minimizeWindow(index);
 	    }
 	  });
-	  this.windows[index].minimized = false;
-	  this.activeWindows.push(this.windows[index].windowId);
+	  self.windows[index].minimized = false;
+	  self.activeWindows.push(self.windows[index].windowId);
 	};
 	
 	/**
@@ -10795,7 +10883,7 @@
 	module.exports = WM;
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports) {
 
 	/**
@@ -10811,13 +10899,13 @@
 	module.exports = new Menu();
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(26)
-	__vue_script__ = __webpack_require__(28)
-	__vue_template__ = __webpack_require__(29)
+	__webpack_require__(27)
+	__vue_script__ = __webpack_require__(29)
+	__vue_template__ = __webpack_require__(30)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
@@ -10834,16 +10922,16 @@
 	})()}
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(27);
+	var content = __webpack_require__(28);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(21)(content, {});
+	var update = __webpack_require__(22)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -10860,10 +10948,10 @@
 	}
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(7)();
+	exports = module.exports = __webpack_require__(8)();
 	// imports
 	
 	
@@ -10874,7 +10962,7 @@
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -10907,19 +10995,19 @@
 	};
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<div id=\"clock\">{{time}}</div>\n\n";
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(31)
-	__vue_script__ = __webpack_require__(33)
-	__vue_template__ = __webpack_require__(34)
+	__webpack_require__(32)
+	__vue_script__ = __webpack_require__(34)
+	__vue_template__ = __webpack_require__(35)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
@@ -10936,16 +11024,16 @@
 	})()}
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(32);
+	var content = __webpack_require__(33);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(21)(content, {});
+	var update = __webpack_require__(22)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -10962,10 +11050,10 @@
 	}
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(7)();
+	exports = module.exports = __webpack_require__(8)();
 	// imports
 	
 	
@@ -10976,7 +11064,7 @@
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10985,7 +11073,7 @@
 	  value: true
 	});
 	
-	var _window_manager = __webpack_require__(23);
+	var _window_manager = __webpack_require__(24);
 	
 	var _window_manager2 = _interopRequireDefault(_window_manager);
 	
@@ -11016,30 +11104,30 @@
 	};
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<div @click=\"open\" :class=\"{running: window.running, active: isActive, app: true}\">\n  <img :src=\"window.icon\">\n  <span class=\"title\">{{window.title}}</span>\n  <span class=\"close\" @click=\"close($index)\">&times;</span>\n\n</div>\n";
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "\n<div id=\"taskBar\">\n  <div class=\"app menu\" @click=\"menu\">\n    <img src=\"" + __webpack_require__(36) + "\">\n  </div>\n  <template v-for=\"window in windows\">\n    <taskbar-item :window=\"window\" :index=\"$index\"></taskbar-item>\n  </template>\n<clock></clock>\n  <!--</div>-->\n</div>\n";
+	module.exports = "\n<div id=\"taskBar\">\n  <div class=\"app menu\" @click=\"menu\">\n    <img src=\"" + __webpack_require__(37) + "\">\n  </div>\n  <template v-for=\"window in windows\">\n    <taskbar-item :window=\"window\" :index=\"$index\"></taskbar-item>\n  </template>\n<clock></clock>\n  <!--</div>-->\n</div>\n";
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAgAElEQVRoBQEwJM/bAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v7f//////////////////////////////////////j4+MMAAAAAAAAAAPLy8kL///////////////////////////////////////////b29mAAAAAAAAAAAPf395///////////////////////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+3//////////////////////////////////////4+PjDAAAAAAAAAADy8vJC///////////////////////////////////////////29vZgAAAAAAAAAAD39/ef//////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/t//////////////////////////////////////+Pj4wwAAAAAAAAAA8vLyQv//////////////////////////////////////////9vb2YAAAAAAAAAAA9/f3n///////////////////////////////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v7f//////////////////////////////////////j4+MMAAAAAAAAAAPLy8kL///////////////////////////////////////////b29mAAAAAAAAAAAPf395///////////////////////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+3//////////////////////////////////////4+PjDAAAAAAAAAADy8vJC///////////////////////////////////////////29vZgAAAAAAAAAAD39/ef//////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/t//////////////////////////////////////+Pj4wwAAAAAAAAAA8vLyQv//////////////////////////////////////////9vb2YAAAAAAAAAAA9/f3n///////////////////////////////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v7f//////////////////////////////////////j4+MMAAAAAAAAAAPLy8kL///////////////////////////////////////////b29mAAAAAAAAAAAPf395///////////////////////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+3//////////////////////////////////////4+PjDAAAAAAAAAADy8vJC///////////////////////////////////////////29vZgAAAAAAAAAAD39/ef//////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPf394v39/ef9/f3n/f395/39/ef9/f3n/f395/39/ef8vLyeAAAAAAAAAAA7e3tKPf395/39/ef9/f3n/f395/39/ef9/f3n/f395/39/ef8PDwPAAAAAAAAAAA8fHxYPf395/39/ef9/f3n/f395/39/ef9/f3n/f395/39/efAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPLy8jjy8vJC8vLyQvLy8kLy8vJC8vLyQvLy8kLy8vJC7u7uMgAAAAAAAAAA6enpEPLy8kLy8vJC8vLyQvLy8kLy8vJC8vLyQvLy8kLy8vJC7OzsGAAAAAAAAAAA7e3tKPLy8kLy8vJC8vLyQvLy8kLy8vJC8vLyQvLy8kLy8vJCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v7f//////////////////////////////////////j4+MMAAAAAAAAAAPLy8kL///////////////////////////////////////////b29mAAAAAAAAAAAPf395///////////////////////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+3//////////////////////////////////////4+PjDAAAAAAAAAADy8vJC///////////////////////////////////////////29vZgAAAAAAAAAAD39/ef//////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/t//////////////////////////////////////+Pj4wwAAAAAAAAAA8vLyQv//////////////////////////////////////////9vb2YAAAAAAAAAAA9/f3n///////////////////////////////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v7f//////////////////////////////////////j4+MMAAAAAAAAAAPLy8kL///////////////////////////////////////////b29mAAAAAAAAAAAPf395///////////////////////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+3//////////////////////////////////////4+PjDAAAAAAAAAADy8vJC///////////////////////////////////////////29vZgAAAAAAAAAAD39/ef//////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/t//////////////////////////////////////+Pj4wwAAAAAAAAAA8vLyQv//////////////////////////////////////////9vb2YAAAAAAAAAAA9/f3n///////////////////////////////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v7f//////////////////////////////////////j4+MMAAAAAAAAAAPLy8kL///////////////////////////////////////////b29mAAAAAAAAAAAPf395///////////////////////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+3//////////////////////////////////////4+PjDAAAAAAAAAADy8vJC///////////////////////////////////////////29vZgAAAAAAAAAAD39/ef//////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPb29lT29vZg9vb2YPb29mD29vZg9vb2YPb29mD29vZg8fHxSgAAAAAAAAAA7OzsGPb29mD29vZg9vb2YPb29mD29vZg9vb2YPb29mD29vZg8PDwJAAAAAAAAAAA8PDwPPb29mD29vZg9vb2YPb29mD29vZg9vb2YPb29mD29vZgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPX19W719fV+9fX1fvX19X719fV+9fX1fvX19X719fV+8PDwYAAAAAAAAAAA6+vrIPX19X719fV+9fX1fvX19X719fV+9fX1fvX19X719fV+7+/vMAAAAAAAAAAA7+/vTPX19X719fV+9fX1fvX19X719fV+9fX1fvX19X719fV+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v7f//////////////////////////////////////j4+MMAAAAAAAAAAPLy8kL///////////////////////////////////////////b29mAAAAAAAAAAAPf395///////////////////////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+3//////////////////////////////////////4+PjDAAAAAAAAAADy8vJC///////////////////////////////////////////29vZgAAAAAAAAAAD39/ef//////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/t//////////////////////////////////////+Pj4wwAAAAAAAAAA8vLyQv//////////////////////////////////////////9vb2YAAAAAAAAAAA9/f3n///////////////////////////////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v7f//////////////////////////////////////j4+MMAAAAAAAAAAPLy8kL///////////////////////////////////////////b29mAAAAAAAAAAAPf395///////////////////////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+3//////////////////////////////////////4+PjDAAAAAAAAAADy8vJC///////////////////////////////////////////29vZgAAAAAAAAAAD39/ef//////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/t//////////////////////////////////////+Pj4wwAAAAAAAAAA8vLyQv//////////////////////////////////////////9vb2YAAAAAAAAAAA9/f3n///////////////////////////////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v7f//////////////////////////////////////j4+MMAAAAAAAAAAPLy8kL///////////////////////////////////////////b29mAAAAAAAAAAAPf395///////////////////////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+3//////////////////////////////////////4+PjDAAAAAAAAAADy8vJC///////////////////////////////////////////29vZgAAAAAAAAAAD39/ef//////////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKCxxL4AAAQ7SURBVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnkemsmbfaloAAAAASUVORK5CYII="
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__vue_script__ = __webpack_require__(38)
-	__vue_template__ = __webpack_require__(39)
+	__vue_script__ = __webpack_require__(39)
+	__vue_template__ = __webpack_require__(40)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
@@ -11056,7 +11144,7 @@
 	})()}
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11065,13 +11153,13 @@
 	  value: true
 	});
 	
-	var _menu = __webpack_require__(24);
+	var _menu = __webpack_require__(25);
 	
 	var _menu2 = _interopRequireDefault(_menu);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var WindowManager = __webpack_require__(23);
+	var WindowManager = __webpack_require__(24);
 	exports.default = {
 	  data: function data() {
 	    return {
@@ -11093,23 +11181,24 @@
 	};
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "\n<div id=\"menu\" v-if=\"menuState.show\">\n  <h1>Apps <img @click=\"close()\" src=\"" + __webpack_require__(40) + "\"></h1>\n  <ul>\n    <li track-by=\"$index\" v-for=\"app in apps\" @click=\"open(app.id)\">\n      <img :src=\"app.icon\">{{app.title}}\n    </li>\n  </ul>\n</div>\n";
+	module.exports = "\n<div id=\"menu\" v-if=\"menuState.show\">\n  <h1>Apps <img @click=\"close()\" src=\"" + __webpack_require__(41) + "\"></h1>\n  <ul>\n    <li track-by=\"$index\" v-for=\"app in apps\" @click=\"open(app.id)\">\n      <img :src=\"app.icon\">{{app.title}}\n    </li>\n  </ul>\n</div>\n";
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports) {
 
 	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAgAElEQVRoBQEwJM/bAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADg4OAK+fn5mfz8/PX8/Pz3+vr6nePj4wwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANXV1QT5+fmF/Pz88fz8/Pn6+vqt6urqFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+fn5mf/////////////////////6+vrB5OTkDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANfX1wT4+Pip//////////////////////r6+r0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPz8/PX///////////////////////////r6+sHk5OQMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANjY2AT4+Pip///////////////////////////+/v7/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD8/Pz3////////////////////////////////+vr6weTk5AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANnZ2QT4+Pip/////////////////////////////////v7+/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+vr6nf/////////////////////////////////////6+vrB5OTkDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANnZ2QT4+Pip//////////////////////////////////////r6+sEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOXl5Qz6+vrD//////////////////////////////////////r6+sHk5OQMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANra2gT4+Pip//////////////////////////////////////v7+9fs7OwYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA5+fnDPr6+sP/////////////////////////////////////+vr6weXl5QwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANra2gT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADn5+cO+vr6w//////////////////////////////////////6+vrB5eXlDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANvb2wT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOfn5w76+vrD//////////////////////////////////////r6+sHl5eUMAAAAAAAAAAAAAAAAAAAAANvb2wT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6OjoDvr6+sP/////////////////////////////////////+vr6weXl5QwAAAAAAAAAANvb2wT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADo6OgO+vr6w//////////////////////////////////////6+vrB5eXlDNvb2wT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOjo6A76+vrD//////////////////////////////////////r6+sH4+Pir//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6OjoDvr6+sP///////////////////////////////////////////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADo6OgO+vr6w/////////////////////////////////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOjo6A76+vrD//////////////////////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6OjoDvr6+sP///////////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANvb2wT4+Pir///////////////////////////////////////////6+vrD5eXlDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANvb2wT4+Pip//////////////////////////////////////////////////////r6+sHl5eUMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANvb2wT4+Pip////////////////////////////////////////////////////////////////+vr6weXl5QwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANvb2wT4+Pip///////////////////////////////////////////////////////////////////////////6+vrB5eXlDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANra2gT4+Pip//////////////////////////////////////v7+9f6+vrF//////////////////////////////////////r6+sHl5eUMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANra2gT4+Pip//////////////////////////////////////v7+9ft7e0a6OjoDvr6+sP/////////////////////////////////////+vr6weTk5AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANnZ2QT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAADo6OgO+vr6w//////////////////////////////////////6+vrB5OTkDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANnZ2QT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAOjo6A76+vrD//////////////////////////////////////r6+sHk5OQMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANjY2AT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6OjoDvr6+sP/////////////////////////////////////+vr6weTk5AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANfX1wT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADo6OgO+vr6w//////////////////////////////////////6+vrB5OTkDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANXV1QT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOjo6A76+vrD//////////////////////////////////////r6+sHj4+MMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD5+fmF//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6OjoDvr6+sP/////////////////////////////////////+vr6qQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/Pz88f////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADn5+cO+vr6w/////////////////////////////////7+/v8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPz8/Pn///////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOfn5w76+vrD///////////////////////////+/v7/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD6+vqt//////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA5+fnDPr6+sP/////////////////////+/v70QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6urqFvr6+r3+/v7//v7+//r6+sHs7OwYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADn5+cM+vr6qf7+/v/+/v7/+/v70fDw8CYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMokCMYAAAQ7SURBVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARWKC+bnqqXcAAAAASUVORK5CYII="
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var remote = __webpack_require__(42);
+	var remote = __webpack_require__(43);
 	var debug = __webpack_require__(3)();
+	var $ = __webpack_require__(44);
 	
 	module.exports = {};
 	module.exports.load = function load(callback) {
@@ -11147,7 +11236,7 @@
 	})();
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports) {
 
 	var remote = {};
@@ -11179,986 +11268,7 @@
 	module.exports = remote;
 
 /***/ },
-/* 43 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __vue_script__, __vue_template__
-	__webpack_require__(44)
-	__vue_script__ = __webpack_require__(46)
-	__vue_template__ = __webpack_require__(50)
-	module.exports = __vue_script__ || {}
-	if (module.exports.__esModule) module.exports = module.exports.default
-	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
-	if (false) {(function () {  module.hot.accept()
-	  var hotAPI = require("vue-hot-reload-api")
-	  hotAPI.install(require("vue"), true)
-	  if (!hotAPI.compatible) return
-	  var id = "/Users/Micaiah/dev/silk-wm/Sleek/public/components/desktop.vue"
-	  if (!module.hot.data) {
-	    hotAPI.createRecord(id, module.exports)
-	  } else {
-	    hotAPI.update(id, module.exports, __vue_template__)
-	  }
-	})()}
-
-/***/ },
 /* 44 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(45);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(21)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-6e0e35a0&file=desktop.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./desktop.vue", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-6e0e35a0&file=desktop.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./desktop.vue");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 45 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(7)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "\n#desktop .window {\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  box-sizing: border-box;\n  padding-bottom: 50px;\n}\n\n.window * {\n  -webkit-user-select: none;\n}\n\n#desktop .window iframe {\n  background-color: white;\n  border: none;\n  width: 100%;\n  height: 100%;\n  margin: 0px;\n  box-sizing: border-box;\n}\n", "", {"version":3,"sources":["/./public/components/desktop.vue?a2f97856"],"names":[],"mappings":";AAoCA;EACA,mBAAA;EACA,SAAA;EACA,UAAA;EACA,YAAA;EACA,aAAA;EACA,uBAAA;EACA,qBAAA;CACA;;AAEA;EACA,0BAAA;CACA;;AAEA;EACA,wBAAA;EACA,aAAA;EACA,YAAA;EACA,aAAA;EACA,YAAA;EACA,uBAAA;CACA","file":"desktop.vue","sourcesContent":["<template>\n  <div id=\"desktop\">\n    <div v-for=\"window in windows\" class=\"window\" v-show=\"!window.minimized\" :style=\"{zIndex: window.zIndex}\">\n      <iframe v-if=\"window.running\" class=\"content\" @load=\"buildChannel($index)\" :src=\"window.url\"\n              data-name=\"{{window.title}}\"></iframe>\n    </div>\n    <div id=\"appNotifications\"></div>\n  </div>\n</template>\n\n<script>\n  import WindowManager from '../js/window_manager';\n  import Channel from '../js/channel';\n\n  export default {\n    data() {\n      return {\n        windows: WindowManager.windows\n      }\n    },\n    methods: {\n      buildChannel (index) {\n        console.log('channel');\n        new Channel(index);\n      },\n      minimize (index) {\n        WindowManager.minimizeWindow(index);\n      },\n      close (index) {\n        WindowManager.closeWindow(index);\n      }\n    }\n  };\n</script>\n\n<style>\n  #desktop .window {\n    position: absolute;\n    top: 0px;\n    left: 0px;\n    width: 100%;\n    height: 100%;\n    box-sizing: border-box;\n    padding-bottom: 50px;\n  }\n\n  .window * {\n    -webkit-user-select: none;\n  }\n\n  #desktop .window iframe {\n    background-color: white;\n    border: none;\n    width: 100%;\n    height: 100%;\n    margin: 0px;\n    box-sizing: border-box;\n  }\n</style>\n"],"sourceRoot":"webpack://"}]);
-	
-	// exports
-
-
-/***/ },
-/* 46 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _window_manager = __webpack_require__(23);
-	
-	var _window_manager2 = _interopRequireDefault(_window_manager);
-	
-	var _channel = __webpack_require__(47);
-	
-	var _channel2 = _interopRequireDefault(_channel);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  data: function data() {
-	    return {
-	      windows: _window_manager2.default.windows
-	    };
-	  },
-	
-	  methods: {
-	    buildChannel: function buildChannel(index) {
-	      console.log('channel');
-	      new _channel2.default(index);
-	    },
-	    minimize: function minimize(index) {
-	      _window_manager2.default.minimizeWindow(index);
-	    },
-	    close: function close(index) {
-	      _window_manager2.default.closeWindow(index);
-	    }
-	  }
-	};
-
-/***/ },
-/* 47 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// channel for each window
-	var Channel = __webpack_require__(48);
-	var $ = __webpack_require__(49);
-	var WindowManager = __webpack_require__(23);
-	var channels = {};
-	
-	function CreateChannel(index) {
-	  var app = WindowManager.windows[index];
-	  app.running = true;
-	  var windowName = app.title;
-	
-	  chan = Channel.build({
-	    window: $("#desktop .window iframe[data-name='" + windowName + "']")[0].contentWindow,
-	    origin: "*",
-	    scope: "testScope",
-	    onReady: function () {
-	      console.log("channel is ready!");
-	      console.log("ready");
-	    }
-	  });
-	
-	  chan.bind("openFile", function (context, params) {
-	    console.log("=============");
-	    console.log(context);
-	    console.log(params);
-	
-	    // open text editor and include path in url
-	    // find text editor
-	
-	    DocumentHost.get("Silk/appDefaults", params.mime).then(function (data) {
-	      function openWindow(title) {
-	        // get app id
-	        var apps = WindowManager.appData;
-	        var app;
-	        for (var i = 0; i < apps.length; i++) {
-	          app = apps[i];
-	          if (app.title === title) {
-	            break;
-	          }
-	        }
-	        app.url = app.url + '?file=' + encodeURIComponent(params.path);
-	        WindowManager.open(app.id, app);
-	
-	        // clone app to not change original url
-	        //app = JSON.parse(JSON.stringify(app));
-	        //app.url = app.url + '?file=' + encodeURIComponent(params.path);
-	        //try {
-	        //  var win = new Win(app, windows, windowOrder);
-	        //  win.start();
-	        //  win.open();
-	        //} catch (e) {
-	        //  alert('error opening file');
-	        //}
-	      }
-	
-	      console.log(data);
-	
-	      // open using default program
-	      if (data.default !== "") {
-	        openWindow(data.default);
-	      }
-	      // if one app, use it if it is not for *.
-	      else if (data.available.length < 2 && data.mime != "*") {
-	          openWindow(data.available[0]);
-	        }
-	        // let user choose program
-	        else {
-	            var html = '<div class="title">Choose App To Open <br>';
-	            html += params.path;
-	            html += '</div> <div class="content"><ul>';
-	            for (var i = 0; i < data.available.length; ++i) {
-	              html += "<li>";
-	              html += data.available[i];
-	              html += "</li>";
-	            }
-	            html += '</ul> <lable><input type="checkbox" checked> Always Use This App </label><div><button>Cancel</button></div></div>';
-	            $("#appNotifications").append(html);
-	            $("#appNotifications").css("display", "block");
-	
-	            // set up click hander
-	            $("#appNotifications .content button").click(function (e) {
-	              $("#appNotifications").css("display", "none");
-	              $("#appNotifications").html("");
-	            });
-	            $("#appNotifications .content li").click(function (e) {
-	              console.log($(e.target).html());
-	              openWindow($(e.target).html());
-	              // if chewckbox is checked, set up default app
-	              if ($('#appNotifications input').is(':checked') == true) {
-	                DocumentHost.get("Silk/setDefault", {
-	                  mime: params.mime,
-	                  app: $(e.target).html()
-	                }).then(function () {});
-	              }
-	              $("#appNotifications").css("display", "none");
-	              $("#appNotifications").html("");
-	            });
-	          }
-	    }).catch(console.error);
-	  });
-	
-	  channels[windowName] = chan;
-	}
-	
-	module.exports = CreateChannel;
-	module.exports.channels = channels;
-
-/***/ },
-/* 48 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*
-	 * js_channel is a very lightweight abstraction on top of
-	 * postMessage which defines message formats and semantics
-	 * to support interactions more rich than just message passing
-	 * js_channel supports:
-	 *  + query/response - traditional rpc
-	 *  + query/update/response - incremental async return of results
-	 *    to a query
-	 *  + notifications - fire and forget
-	 *  + error handling
-	 *
-	 * js_channel is based heavily on json-rpc, but is focused at the
-	 * problem of inter-iframe RPC.
-	 *
-	 * Message types:
-	 *  There are 5 types of messages that can flow over this channel,
-	 *  and you may determine what type of message an object is by
-	 *  examining its parameters:
-	 *  1. Requests
-	 *    + integer id
-	 *    + string method
-	 *    + (optional) any params
-	 *  2. Callback Invocations (or just "Callbacks")
-	 *    + integer id
-	 *    + string callback
-	 *    + (optional) params
-	 *  3. Error Responses (or just "Errors)
-	 *    + integer id
-	 *    + string error
-	 *    + (optional) string message
-	 *  4. Responses
-	 *    + integer id
-	 *    + (optional) any result
-	 *  5. Notifications
-	 *    + string method
-	 *    + (optional) any params
-	 */
-	
-	// Universal module definition //
-	(function (root, factory) {
-	  if (true) {
-	    // CommonJS
-	    module.exports = factory();
-	  } else if (typeof define === 'function' && define.amd) {
-	    // AMD
-	    define([], function () {
-	      return (root.Channel = factory());
-	    });
-	  } else {
-	    // Global Variables
-	    root.Channel = factory();
-	  }
-	}(this, function () {
-	  "use strict";
-	  var Channel = (function() {
-	
-	    // current transaction id, start out at a random *odd* number between 1 and a million
-	    // There is one current transaction counter id per page, and it's shared between
-	    // channel instances.  That means of all messages posted from a single javascript
-	    // evaluation context, we'll never have two with the same id.
-	    var s_curTranId = Math.floor(Math.random()*1000001);
-	
-	    // no two bound channels in the same javascript evaluation context may have the same origin, scope, and window.
-	    // further if two bound channels have the same window and scope, they may not have *overlapping* origins
-	    // (either one or both support '*').  This restriction allows a single onMessage handler to efficiently
-	    // route messages based on origin and scope.  The s_boundChans maps origins to scopes, to message
-	    // handlers.  Request and Notification messages are routed using this table.
-	    // Finally, channels are inserted into this table when built, and removed when destroyed.
-	    var s_boundChans = { };
-	
-	    // add a channel to s_boundChans, throwing if a dup exists
-	    function s_addBoundChan(win, origin, scope, handler) {
-	        function hasWin(arr) {
-	            for (var i = 0; i < arr.length; i++) if (arr[i].win === win) return true;
-	            return false;
-	        }
-	
-	        // does she exist?
-	        var exists = false;
-	
-	        if (origin === '*') {
-	            // we must check all other origins, sadly.
-	            for (var k in s_boundChans) {
-	                if (!s_boundChans.hasOwnProperty(k)) continue;
-	                if (k === '*') continue;
-	                if (typeof s_boundChans[k][scope] === 'object') {
-	                    exists = hasWin(s_boundChans[k][scope]);
-	                    if (exists) break;
-	                }
-	            }
-	        } else {
-	            // we must check only '*'
-	            if ((s_boundChans['*'] && s_boundChans['*'][scope])) {
-	                exists = hasWin(s_boundChans['*'][scope]);
-	            }
-	            if (!exists && s_boundChans[origin] && s_boundChans[origin][scope])
-	            {
-	                exists = hasWin(s_boundChans[origin][scope]);
-	            }
-	        }
-	        if (exists) throw "A channel is already bound to the same window which overlaps with origin '"+ origin +"' and has scope '"+scope+"'";
-	
-	        if (typeof s_boundChans[origin] != 'object') s_boundChans[origin] = { };
-	        if (typeof s_boundChans[origin][scope] != 'object') s_boundChans[origin][scope] = [ ];
-	        s_boundChans[origin][scope].push({win: win, handler: handler});
-	    }
-	
-	    function s_removeBoundChan(win, origin, scope) {
-	        var arr = s_boundChans[origin][scope];
-	        for (var i = 0; i < arr.length; i++) {
-	            if (arr[i].win === win) {
-	                arr.splice(i,1);
-	            }
-	        }
-	        if (s_boundChans[origin][scope].length === 0) {
-	            delete s_boundChans[origin][scope];
-	        }
-	    }
-	
-	    function s_isArray(obj) {
-	        if (Array.isArray) return Array.isArray(obj);
-	        else {
-	            return (obj.constructor.toString().indexOf("Array") != -1);
-	        }
-	    }
-	
-	    // No two outstanding outbound messages may have the same id, period.  Given that, a single table
-	    // mapping "transaction ids" to message handlers, allows efficient routing of Callback, Error, and
-	    // Response messages.  Entries are added to this table when requests are sent, and removed when
-	    // responses are received.
-	    var s_transIds = { };
-	
-	    // class singleton onMessage handler
-	    // this function is registered once and all incoming messages route through here.  This
-	    // arrangement allows certain efficiencies, message data is only parsed once and dispatch
-	    // is more efficient, especially for large numbers of simultaneous channels.
-	    var s_onMessage = function(e) {
-	        try {
-	          var m = JSON.parse(e.data);
-	          if (typeof m !== 'object' || m === null) throw "malformed";
-	        } catch(e) {
-	          // just ignore any posted messages that do not consist of valid JSON
-	          return;
-	        }
-	
-	        var w = e.source;
-	        var o = e.origin;
-	        var s, i, meth;
-	
-	        if (typeof m.method === 'string') {
-	            var ar = m.method.split('::');
-	            if (ar.length == 2) {
-	                s = ar[0];
-	                meth = ar[1];
-	            } else {
-	                meth = m.method;
-	            }
-	        }
-	
-	        if (typeof m.id !== 'undefined') i = m.id;
-	
-	        // w is message source window
-	        // o is message origin
-	        // m is parsed message
-	        // s is message scope
-	        // i is message id (or undefined)
-	        // meth is unscoped method name
-	        // ^^ based on these factors we can route the message
-	
-	        // if it has a method it's either a notification or a request,
-	        // route using s_boundChans
-	        if (typeof meth === 'string') {
-	            var delivered = false;
-	            if (s_boundChans[o] && s_boundChans[o][s]) {
-	                for (var j = 0; j < s_boundChans[o][s].length; j++) {
-	                    if (s_boundChans[o][s][j].win === w) {
-	                        s_boundChans[o][s][j].handler(o, meth, m);
-	                        delivered = true;
-	                        break;
-	                    }
-	                }
-	            }
-	
-	            if (!delivered && s_boundChans['*'] && s_boundChans['*'][s]) {
-	                for (var j = 0; j < s_boundChans['*'][s].length; j++) {
-	                    if (s_boundChans['*'][s][j].win === w) {
-	                        s_boundChans['*'][s][j].handler(o, meth, m);
-	                        break;
-	                    }
-	                }
-	            }
-	        }
-	        // otherwise it must have an id (or be poorly formed
-	        else if (typeof i != 'undefined') {
-	            if (s_transIds[i]) s_transIds[i](o, meth, m);
-	        }
-	    };
-	
-	    // Setup postMessage event listeners
-	    if (window.addEventListener) window.addEventListener('message', s_onMessage, false);
-	    else if(window.attachEvent) window.attachEvent('onmessage', s_onMessage);
-	
-	    /* a messaging channel is constructed from a window and an origin.
-	     * the channel will assert that all messages received over the
-	     * channel match the origin
-	     *
-	     * Arguments to Channel.build(cfg):
-	     *
-	     *   cfg.window - the remote window with which we'll communicate
-	     *   cfg.origin - the expected origin of the remote window, may be '*'
-	     *                which matches any origin
-	     *   cfg.scope  - the 'scope' of messages.  a scope string that is
-	     *                prepended to message names.  local and remote endpoints
-	     *                of a single channel must agree upon scope. Scope may
-	     *                not contain double colons ('::').
-	     *   cfg.debugOutput - A boolean value.  If true and window.console.log is
-	     *                a function, then debug strings will be emitted to that
-	     *                function.
-	     *   cfg.postMessageObserver - A function that will be passed two arguments,
-	     *                an origin and a message.  It will be passed these immediately
-	     *                before messages are posted.
-	     *   cfg.gotMessageObserver - A function that will be passed two arguments,
-	     *                an origin and a message.  It will be passed these arguments
-	     *                immediately after they pass scope and origin checks, but before
-	     *                they are processed.
-	     *   cfg.onReady - A function that will be invoked when a channel becomes "ready",
-	     *                this occurs once both sides of the channel have been
-	     *                instantiated and an application level handshake is exchanged.
-	     *                the onReady function will be passed a single argument which is
-	     *                the channel object that was returned from build().
-	     *   cfg.reconnect - A boolean value - if true, the channel allows reconnection
-	     *                useful when the page in a child frame is reloaded and wants
-	     *                to re-establish connection with parent window using the same
-	     *                origin, scope and bindings.
-	     *   cfg.publish - A boolean value. If true, bind will automatically publish
-	     *                the method on the remote side. The method will be published under
-	     *                channelObject.remote, but it will not be available before the onReady
-	     *                callback is called on the other side.
-	     *   cfg.remote - An array of method names for which stubs should be generated without
-	     *                waiting for remote end to publish them. A string (for a single method name)
-	     *                is also accepted. This allows methods under channelObject.remote to be called
-	     *                also before onReady callback is called; the invocations will be queued until
-	     *                the channel is ready. If the methods do not exist on remote side, the
-	     *                error callback will be called.
-	     */
-	    return {
-	        build: function(cfg) {
-	            var debug = function(m) {
-	                if (cfg.debugOutput && window.console && window.console.log) {
-	                    // try to stringify, if it doesn't work we'll let javascript's built in toString do its magic
-	                    try {
-	                        if (typeof m !== 'string') {
-	                            m = JSON.stringify(m);
-	                        }
-	                    }
-	                    catch(e) {
-	                    }
-	                    window.console.log("["+chanId+"] " + m);
-	                }
-	            };
-	
-	            /* browser capabilities check */
-	            if (!window.postMessage) throw("jschannel cannot run this browser, no postMessage");
-	            if (!window.JSON || !window.JSON.stringify || ! window.JSON.parse) {
-	                throw("jschannel cannot run this browser, no JSON parsing/serialization");
-	            }
-	
-	            /* basic argument validation */
-	            if (typeof cfg != 'object') throw("Channel build invoked without a proper object argument");
-	
-	            if (!cfg.window || !cfg.window.postMessage) throw("Channel.build() called without a valid window argument");
-	
-	            /* we'd have to do a little more work to be able to run multiple channels that intercommunicate the same
-	             * window...  Not sure if we care to support that */
-	            if (window === cfg.window) throw("target window is same as present window -- not allowed");
-	
-	            // let's require that the client specify an origin.  if we just assume '*' we'll be
-	            // propagating unsafe practices.  that would be lame.
-	            var validOrigin = false;
-	            if (typeof cfg.origin === 'string') {
-	                var oMatch;
-	                if (cfg.origin === "*") validOrigin = true;
-	                // allow valid domains under http and https.  Also, trim paths off otherwise valid origins.
-	                else if (null !== (oMatch = cfg.origin.match(/^https?:\/\/(?:[-a-zA-Z0-9_\.])+(?::\d+)?/))) {
-	                    cfg.origin = oMatch[0].toLowerCase();
-	                    validOrigin = true;
-	                }
-	            }
-	
-	            if (!validOrigin) throw ("Channel.build() called with an invalid origin");
-	
-	            if (typeof cfg.scope !== 'undefined') {
-	                if (typeof cfg.scope !== 'string') throw 'scope, when specified, must be a string';
-	                if (cfg.scope.split('::').length > 1) throw "scope may not contain double colons: '::'";
-	            } else {
-	                cfg.scope = "__default";
-	            }
-	
-	            /* private variables */
-	            // generate a random and psuedo unique id for this channel
-	            var chanId = (function () {
-	                var text = "";
-	                var alpha = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	                for(var i=0; i < 5; i++) text += alpha.charAt(Math.floor(Math.random() * alpha.length));
-	                return text;
-	            })();
-	
-	            // registrations: mapping method names to call objects
-	            var regTbl = { };
-	            // current oustanding sent requests
-	            var outTbl = { };
-	            // current oustanding received requests
-	            var inTbl = { };
-	            // are we ready yet?  when false we will block outbound messages.
-	            var ready = false;
-	            var pendingQueue = [ ];
-	            var publishQueue = [ ];
-	
-	            var createTransaction = function(id,origin,callbacks) {
-	                var shouldDelayReturn = false;
-	                var completed = false;
-	
-	                return {
-	                    origin: origin,
-	                    invoke: function(cbName, v) {
-	                        // verify in table
-	                        if (!inTbl[id]) throw "attempting to invoke a callback of a nonexistent transaction: " + id;
-	                        // verify that the callback name is valid
-	                        var valid = false;
-	                        for (var i = 0; i < callbacks.length; i++) if (cbName === callbacks[i]) { valid = true; break; }
-	                        if (!valid) throw "request supports no such callback '" + cbName + "'";
-	
-	                        // send callback invocation
-	                        postMessage({ id: id, callback: cbName, params: v});
-	                    },
-	                    error: function(error, message) {
-	                        completed = true;
-	                        // verify in table
-	                        if (!inTbl[id]) throw "error called for nonexistent message: " + id;
-	
-	                        // remove transaction from table
-	                        delete inTbl[id];
-	
-	                        // send error
-	                        postMessage({ id: id, error: error, message: message });
-	                    },
-	                    complete: function(v) {
-	                        completed = true;
-	                        // verify in table
-	                        if (!inTbl[id]) throw "complete called for nonexistent message: " + id;
-	                        // remove transaction from table
-	                        delete inTbl[id];
-	                        // send complete
-	                        postMessage({ id: id, result: v });
-	                    },
-	                    delayReturn: function(delay) {
-	                        if (typeof delay === 'boolean') {
-	                            shouldDelayReturn = (delay === true);
-	                        }
-	                        return shouldDelayReturn;
-	                    },
-	                    completed: function() {
-	                        return completed;
-	                    }
-	                };
-	            };
-	
-	            var setTransactionTimeout = function(transId, timeout, method) {
-	              return window.setTimeout(function() {
-	                if (outTbl[transId]) {
-	                  // XXX: what if client code raises an exception here?
-	                  var msg = "timeout (" + timeout + "ms) exceeded on method '" + method + "'";
-	                  if (outTbl[transId].error) {
-	                      outTbl[transId].error("timeout_error", msg);
-	                  }
-	                  delete outTbl[transId];
-	                  delete s_transIds[transId];
-	                }
-	              }, timeout);
-	            };
-	
-	            var onMessage = function(origin, method, m) {
-	                // if an observer was specified at allocation time, invoke it
-	                if (typeof cfg.gotMessageObserver === 'function') {
-	                    // pass observer a clone of the object so that our
-	                    // manipulations are not visible (i.e. method unscoping).
-	                    // This is not particularly efficient, but then we expect
-	                    // that message observers are primarily for debugging anyway.
-	                    try {
-	                        cfg.gotMessageObserver(origin, m);
-	                    } catch (e) {
-	                        debug("gotMessageObserver() raised an exception: " + e.toString());
-	                    }
-	                }
-	
-	                // now, what type of message is this?
-	                if (m.id && method) {
-	                    inTbl[m.id] = { };
-	                    var trans = createTransaction(m.id, origin, m.callbacks ? m.callbacks : [ ]);
-	                    // a request!  do we have a registered handler for this request?
-	                    if (regTbl[method]) {
-	                        try {
-	                            // callback handling.  we'll magically create functions inside the parameter list for each
-	                            // callback
-	                            if (m.callbacks && s_isArray(m.callbacks) && m.callbacks.length > 0) {
-	                                for (var i = 0; i < m.callbacks.length; i++) {
-	                                    var path = m.callbacks[i];
-	                                    var obj = m.params;
-	                                    var pathItems = path.split('/');
-	                                    for (var j = 0; j < pathItems.length - 1; j++) {
-	                                        var cp = pathItems[j];
-	                                        if (typeof obj[cp] !== 'object') obj[cp] = { };
-	                                        obj = obj[cp];
-	                                    }
-	                                    obj[pathItems[pathItems.length - 1]] = (function() {
-	                                        var cbName = path;
-	                                        return function(params) {
-	                                            return trans.invoke(cbName, params);
-	                                        };
-	                                    })();
-	                                }
-	                            }
-	                            var resp = regTbl[method](trans, m.params);
-	                            if (!trans.delayReturn() && !trans.completed()) trans.complete(resp);
-	                        } catch(e) {
-	                            // automagic handling of exceptions:
-	                            var error = "runtime_error";
-	                            var message = null;
-	                            // * if it's a string then it gets an error code of 'runtime_error' and string is the message
-	                            if (typeof e === 'string') {
-	                                message = e;
-	                            } else if (typeof e === 'object') {
-	                                // if it's an Error instance we use the constructor name to set the error property
-	                                // and we just copy the error message
-	                                if (e instanceof Error) {
-	                                    error = e.constructor.name;
-	                                    message = e.message;
-	                                }
-	                                // Otherwise, it's either an array or an object
-	                                // * if it's an array of length two, then  array[0] is the code, array[1] is the error message
-	                                else if (e && s_isArray(e) && e.length == 2) {
-	                                    error = e[0];
-	                                    message = e[1];
-	                                }
-	                                // * if it's an object then we'll look form error and message parameters
-	                                else if (typeof e.error === 'string') {
-	                                    error = e.error;
-	                                    if (!e.message) message = "";
-	                                    else if (typeof e.message === 'string') message = e.message;
-	                                    else e = e.message; // let the stringify/toString message give us a reasonable verbose error string
-	                                }
-	                            }
-	
-	                            // message is *still* null, let's try harder
-	                            if (message === null) {
-	                                try {
-	                                    message = JSON.stringify(e);
-	                                    /* On MSIE8, this can result in 'out of memory', which
-	                                     * leaves message undefined. */
-	                                    if (typeof(message) == 'undefined')
-	                                      message = e.toString();
-	                                } catch (e2) {
-	                                    message = e.toString();
-	                                }
-	                            }
-	
-	                            trans.error(error,message);
-	                        }
-	                    } else { // if no method found, send error
-	                        trans.error("method_not_found", "No method '" + method + "' was (yet) bound by the provider");
-	                    }
-	                } else if (m.id && m.callback) {
-	                    if (!outTbl[m.id] ||!outTbl[m.id].callbacks || !outTbl[m.id].callbacks[m.callback])
-	                    {
-	                        debug("ignoring invalid callback, id:"+m.id+ " (" + m.callback +")");
-	                    } else {
-	                        // XXX: what if client code raises an exception here?
-	                        outTbl[m.id].callbacks[m.callback](m.params);
-	                    }
-	                } else if (m.id) {
-	                    if (!outTbl[m.id]) {
-	                        debug("ignoring invalid response: " + m.id);
-	                    } else {
-	                        // XXX: what if client code raises an exception here?
-	                        if (m.error) {
-	                            // We might not have an error callback
-	                            if(outTbl[m.id].error) {
-	                                outTbl[m.id].error(m.error, m.message);
-	                            }
-	                        } else {
-	                            // But we always have a success callback
-	                            if (m.result !== undefined) {
-	                                outTbl[m.id].success(m.result);
-	                            } else {
-	                                outTbl[m.id].success();
-	                            }
-	                        }
-	                        delete outTbl[m.id];
-	                        delete s_transIds[m.id];
-	                    }
-	                } else if (method) {
-	                    // tis a notification.
-	                    if (regTbl[method]) {
-	                        // yep, there's a handler for that.
-	                        // transaction has only origin for notifications.
-	                        regTbl[method]({ origin: origin }, m.params);
-	                        // if the client throws, we'll just let it bubble out
-	                        // what can we do?  Also, here we'll ignore return values
-	                    }
-	                }
-	            };
-	
-	            // now register our bound channel for msg routing
-	            s_addBoundChan(cfg.window, cfg.origin, cfg.scope, onMessage);
-	
-	            // scope method names based on cfg.scope specified when the Channel was instantiated
-	            var scopeMethod = function(m) {
-	                return [cfg.scope, m].join("::");
-	            };
-	
-	            // a small wrapper around postmessage whose primary function is to handle the
-	            // case that clients start sending messages before the other end is "ready"
-	            var postMessage = function(msg, force) {
-	                if (!msg) throw "postMessage called with null message";
-	
-	                // delay posting if we're not ready yet.
-	                if (!force && !ready) {
-	                    debug("queue message: " + JSON.stringify(msg));
-	                    pendingQueue.push(msg);
-	                } else {
-	                    if (typeof cfg.postMessageObserver === 'function') {
-	                        try {
-	                            cfg.postMessageObserver(cfg.origin, msg);
-	                        } catch (e) {
-	                            debug("postMessageObserver() raised an exception: " + e.toString());
-	                        }
-	                    }
-	                    debug("post message: " + JSON.stringify(msg) + " with origin " + cfg.origin);
-	                    cfg.window.postMessage(JSON.stringify(msg), cfg.origin);
-	                }
-	            };
-	
-	            var onReady = function(trans, params) {
-	                debug('ready msg received');
-	                if (ready && !cfg.reconnect) {
-	                    throw "received ready message while in ready state.";
-	                }
-	                ready = true;
-	
-	                // only append suffix to chanId once:
-	                if (chanId.length < 6) {
-		                if (params.type === 'publish-request') {
-		                    chanId += '-R';
-		                } else {
-		                    chanId += '-L';
-		                }
-	                }
-	                debug('ready msg accepted.');
-	
-	                if (params.type === 'publish-request') {
-	                    obj.notify({ method: '__ready', params: {
-	                        type:'publish-reply',
-	                        publish: publishQueue
-	                    } });
-	                }
-	
-	                for (var i = 0; i < params.publish.length; i++) {
-	                    if (params.publish[i].action === "bind") {
-	                        createStubs([params.publish[i].method], obj.remote);
-	                    } else { // unbind
-	                        delete obj.remote[params.publish[i].method];
-	                    }
-	                }
-	
-	                //unbind ready handler unless we allow reconnecting:
-	                if (!cfg.reconnect) {
-	                    obj.unbind('__ready', true); // now this handler isn't needed any more.
-	                }
-	
-	                // flush queue
-	                while (pendingQueue.length) {
-	                    postMessage(pendingQueue.splice(0, 1)[0]);
-	                }
-	                publishQueue = [];
-	                // invoke onReady observer if provided
-	                if (typeof cfg.onReady === 'function') cfg.onReady(obj);
-	
-	            };
-	
-	            var createStubs = function(stubList, targetObj) {
-	                stubList = [].concat(stubList); // Coerce into array, allows string to be used for single-item array
-	                var method;
-	                for(var i=0; i < stubList.length; i++) {
-	                    method = stubList[i].toString();
-	                    targetObj[method] = function(m) {
-	                        return function(params, success, error) {
-	                            if (success) {
-	                                obj.call({
-	                                    method: m,
-	                                    params: params,
-	                                    success: success,
-	                                    error: error
-	                                });
-	                            } else {
-	                                obj.notify({
-	                                    method: m,
-	                                    params: params
-	                                });
-	                            }
-	                        };
-	                    }(method);
-	                }
-	            }
-	
-	            // Dynamic publish from remote
-	            var onBind = function(trans, method) {
-	                createStubs([method], obj.remote);
-	            };
-	
-	            // Dynamic unpublish from remote
-	            var onUnbind = function(trans, method) {
-	                if (obj.remote[method]) {
-	                    delete obj.remote[method];
-	                }
-	            };
-	
-	            var obj = {
-	
-	                remote: {},
-	
-	                // tries to unbind a bound message handler.  returns false if not possible
-	                unbind: function (method, doNotPublish) {
-	                    if (regTbl[method]) {
-	                        if (!(delete regTbl[method])) throw ("can't delete method: " + method);
-	                        if (cfg.publish && ! doNotPublish) {
-	                            if (ready) {
-	                                obj.notify({ method: '__unbind', params: method });
-	                            } else {
-	                                publishQueue.push({ action: 'unbind', method: method });
-	                            }
-	                        }
-	                        return true;
-	                    }
-	                    return false;
-	                },
-	                bind: function (method, cb, doNotPublish) {
-	                    if (!method || typeof method !== 'string') throw "'method' argument to bind must be string";
-	                    if (!cb || typeof cb !== 'function') throw "callback missing from bind params";
-	
-	                    if (regTbl[method]) throw "method '"+method+"' is already bound!";
-	                    regTbl[method] = cb;
-	                    if (cfg.publish && ! doNotPublish) {
-	                        if (ready) {
-	                            obj.notify({ method: '__bind', params: method });
-	                        } else {
-	                            publishQueue.push({ action: 'bind', method: method });
-	                        }
-	                    }
-	                    return this;
-	                },
-	                call: function(m) {
-	                    if (!m) throw 'missing arguments to call function';
-	                    if (!m.method || typeof m.method !== 'string') throw "'method' argument to call must be string";
-	                    if (!m.success || typeof m.success !== 'function') throw "'success' callback missing from call";
-	
-	                    // now it's time to support the 'callback' feature of jschannel.  We'll traverse the argument
-	                    // object and pick out all of the functions that were passed as arguments.
-	                    var callbacks = { };
-	                    var callbackNames = [ ];
-	                    var seen = [ ];
-	
-	                    var pruneFunctions = function (path, obj) {
-	                        if (seen.indexOf(obj) >= 0) {
-	                            throw "params cannot be a recursive data structure"
-	                        }
-	                        seen.push(obj);
-	
-	                        if (typeof obj === 'object') {
-	                            for (var k in obj) {
-	                                if (!obj.hasOwnProperty(k)) continue;
-	                                var np = path + (path.length ? '/' : '') + k;
-	                                if (typeof obj[k] === 'function') {
-	                                    callbacks[np] = obj[k];
-	                                    callbackNames.push(np);
-	                                    delete obj[k];
-	                                } else if (typeof obj[k] === 'object') {
-	                                    pruneFunctions(np, obj[k]);
-	                                }
-	                            }
-	                        }
-	                    };
-	                    pruneFunctions("", m.params);
-	
-	                    // build a 'request' message and send it
-	                    var msg = { id: s_curTranId, method: scopeMethod(m.method), params: m.params };
-	                    if (callbackNames.length) msg.callbacks = callbackNames;
-	
-	                    if (m.timeout)
-	                      // XXX: This function returns a timeout ID, but we don't do anything with it.
-	                      // We might want to keep track of it so we can cancel it using clearTimeout()
-	                      // when the transaction completes.
-	                      setTransactionTimeout(s_curTranId, m.timeout, scopeMethod(m.method));
-	
-	                    // insert into the transaction table
-	                    outTbl[s_curTranId] = { callbacks: callbacks, error: m.error, success: m.success };
-	                    s_transIds[s_curTranId] = onMessage;
-	
-	                    // increment current id
-	                    s_curTranId++;
-	
-	                    postMessage(msg);
-	                },
-	                notify: function(m) {
-	                    if (!m) throw 'missing arguments to notify function';
-	                    if (!m.method || typeof m.method !== 'string') throw "'method' argument to notify must be string";
-	
-	                    // no need to go into any transaction table
-	                    postMessage({ method: scopeMethod(m.method), params: m.params });
-	                },
-	                destroy: function () {
-	                    s_removeBoundChan(cfg.window, cfg.origin, cfg.scope);
-	                    if (window.removeEventListener) window.removeEventListener('message', onMessage, false);
-	                    else if(window.detachEvent) window.detachEvent('onmessage', onMessage);
-	                    ready = false;
-	                    regTbl = { };
-	                    inTbl = { };
-	                    outTbl = { };
-	                    cfg.origin = null;
-	                    pendingQueue = [ ];
-	                    debug("channel destroyed");
-	                    chanId = "";
-	                }
-	            };
-	
-	            obj.bind('__ready', onReady, true);
-	            obj.bind('__bind', onBind, true);
-	            obj.bind('__unbind', onUnbind, true);
-	            if (cfg.remote) {
-	                createStubs(cfg.remote, obj.remote);
-	            }
-	            setTimeout(function() {
-	                if (chanId.length > 0) { // The channel might already have been destroyed
-	                    postMessage({ method: scopeMethod('__ready'), params: {
-	                        type: "publish-request",
-	                        publish: publishQueue
-	                    } }, true);
-	                }
-	
-	            }, 0);
-	
-	            return obj;
-	        }
-	    };
-	  })();
-	
-	
-	  return Channel;
-	}));
-
-
-/***/ },
-/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -21374,13 +20484,1178 @@
 
 
 /***/ },
-/* 50 */
-/***/ function(module, exports) {
+/* 45 */
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "\n<div id=\"desktop\">\n  <div v-for=\"window in windows\" class=\"window\" v-show=\"!window.minimized\" :style=\"{zIndex: window.zIndex}\">\n    <iframe v-if=\"window.running\" class=\"content\" @load=\"buildChannel($index)\" :src=\"window.url\"\n            data-name=\"{{window.title}}\"></iframe>\n  </div>\n  <div id=\"appNotifications\"></div>\n</div>\n";
+	var __vue_script__, __vue_template__
+	__webpack_require__(46)
+	__vue_script__ = __webpack_require__(48)
+	__vue_template__ = __webpack_require__(58)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), true)
+	  if (!hotAPI.compatible) return
+	  var id = "/Users/Micaiah/dev/silk-wm/Sleek/public/components/desktop.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(47);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(22)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-6e0e35a0&file=desktop.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./desktop.vue", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-6e0e35a0&file=desktop.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./desktop.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 47 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(8)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n#desktop .window {\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  box-sizing: border-box;\n  padding-bottom: 50px;\n}\n\n.window * {\n  -webkit-user-select: none;\n}\n\niframe {\n  background-color: white;\n  border: none;\n  width: 100%;\n  height: 100%;\n  margin: 0px;\n  box-sizing: border-box;\n}\n\n.window .popup {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  height: 100%;\n  width: 100%;\n  background-color: rgba(256, 256, 256, 0.5);\n}\n\n.window .popup .content {\n  position: absolute;\n  top: 50px;\n  left: 50%;\n  width: 500px;\n  height: 300px;\n  margin-left: -250px;\n  background-color: red;\n}\n", "", {"version":3,"sources":["/./public/components/desktop.vue?48cff294"],"names":[],"mappings":";AA6CA;EACA,mBAAA;EACA,SAAA;EACA,UAAA;EACA,YAAA;EACA,aAAA;EACA,uBAAA;EACA,qBAAA;CACA;;AAEA;EACA,0BAAA;CACA;;AAEA;EACA,wBAAA;EACA,aAAA;EACA,YAAA;EACA,aAAA;EACA,YAAA;EACA,uBAAA;CACA;;AAEA;EACA,gBAAA;EACA,SAAA;EACA,UAAA;EACA,aAAA;EACA,YAAA;EACA,2CAAA;CACA;;AAEA;EACA,mBAAA;EACA,UAAA;EACA,UAAA;EACA,aAAA;EACA,cAAA;EACA,oBAAA;EACA,sBAAA;CACA","file":"desktop.vue","sourcesContent":["<template>\n  <div id=\"desktop\">\n    <div v-for=\"window in windows\" class=\"window\" v-show=\"!window.minimized\" :style=\"{zIndex: window.zIndex}\">\n      <iframe v-if=\"window.running\" class=\"content\" @load=\"buildChannel($index)\" :src=\"window.url\"\n              data-name=\"{{window.title}}\"></iframe>\n      <div class=\"popup\" v-if=\"window.popups\" v-for=\"popup in window.popups\">\n        <component :popup=\"popup\" :is=\"popup.component\"></component>\n      </div>\n    </div>\n    <div id=\"appNotifications\"></div>\n  </div>\n</template>\n\n<script>\n  import WindowManager from '../js/window_manager';\n  import Channel from '../js/channel';\n\n  //popups\n  import FileExplorer from './fileExplorer.vue';\n\n  export default {\n    data() {\n      return {\n        windows: WindowManager.windows\n      }\n    },\n    methods: {\n      buildChannel (index) {\n        console.log('channel');\n        new Channel(index);\n      },\n      minimize (index) {\n        WindowManager.minimizeWindow(index);\n      },\n      close (index) {\n        WindowManager.closeWindow(index);\n      }\n    },\n    components: {\n      'file-explorer': FileExplorer\n    }\n  };\n</script>\n\n<style>\n  #desktop .window {\n    position: absolute;\n    top: 0px;\n    left: 0px;\n    width: 100%;\n    height: 100%;\n    box-sizing: border-box;\n    padding-bottom: 50px;\n  }\n\n  .window * {\n    -webkit-user-select: none;\n  }\n\n  iframe {\n    background-color: white;\n    border: none;\n    width: 100%;\n    height: 100%;\n    margin: 0px;\n    box-sizing: border-box;\n  }\n\n  .window .popup {\n    position: fixed;\n    top: 0px;\n    left: 0px;\n    height: 100%;\n    width: 100%;\n    background-color: rgba(256, 256, 256, 0.5);\n  }\n\n  .window .popup .content {\n    position: absolute;\n    top: 50px;\n    left: 50%;\n    width: 500px;\n    height: 300px;\n    margin-left: -250px;\n    background-color: red;\n  }\n</style>\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _window_manager = __webpack_require__(24);
+	
+	var _window_manager2 = _interopRequireDefault(_window_manager);
+	
+	var _channel = __webpack_require__(49);
+	
+	var _channel2 = _interopRequireDefault(_channel);
+	
+	var _fileExplorer = __webpack_require__(53);
+	
+	var _fileExplorer2 = _interopRequireDefault(_fileExplorer);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  data: function data() {
+	    return {
+	      windows: _window_manager2.default.windows
+	    };
+	  },
+	
+	  methods: {
+	    buildChannel: function buildChannel(index) {
+	      console.log('channel');
+	      new _channel2.default(index);
+	    },
+	    minimize: function minimize(index) {
+	      _window_manager2.default.minimizeWindow(index);
+	    },
+	    close: function close(index) {
+	      _window_manager2.default.closeWindow(index);
+	    }
+	  },
+	  components: {
+	    'file-explorer': _fileExplorer2.default
+	  }
+	};
+
+/***/ },
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// channel for each window
+	var Channel = __webpack_require__(50);
+	var $ = __webpack_require__(44);
+	var WindowManager = __webpack_require__(24);
+	var clientAPI = __webpack_require__(51);
+	var channels = {};
+	
+	function CreateChannel(index) {
+	  var self = this;
+	  var app = WindowManager.windows[index];
+	  if (channels[app.windowId]) {
+	    // we already have a channel to the app
+	    return channels[app.windowId];
+	  }
+	  var context = $("#desktop .window iframe[data-name='" + app.title + "']")[0].contentWindow;
+	  console.log(context);
+	  WinAbs.call(self, context);
+	
+	  for (var key in clientAPI) {
+	    this.add(key, clientAPI[key].bind(app));
+	  }
+	
+	  channels[app.windowId] = this;
+	}
+	
+	CreateChannel.prototype = Object.create(WinAbs.prototype);
+	CreateChannel.prototype.constructor = Channel;
+	
+	//TODO: add method to remove channels
+	module.exports = CreateChannel;
+	module.exports.channels = channels;
+
+/***/ },
+/* 50 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+	 * js_channel is a very lightweight abstraction on top of
+	 * postMessage which defines message formats and semantics
+	 * to support interactions more rich than just message passing
+	 * js_channel supports:
+	 *  + query/response - traditional rpc
+	 *  + query/update/response - incremental async return of results
+	 *    to a query
+	 *  + notifications - fire and forget
+	 *  + error handling
+	 *
+	 * js_channel is based heavily on json-rpc, but is focused at the
+	 * problem of inter-iframe RPC.
+	 *
+	 * Message types:
+	 *  There are 5 types of messages that can flow over this channel,
+	 *  and you may determine what type of message an object is by
+	 *  examining its parameters:
+	 *  1. Requests
+	 *    + integer id
+	 *    + string method
+	 *    + (optional) any params
+	 *  2. Callback Invocations (or just "Callbacks")
+	 *    + integer id
+	 *    + string callback
+	 *    + (optional) params
+	 *  3. Error Responses (or just "Errors)
+	 *    + integer id
+	 *    + string error
+	 *    + (optional) string message
+	 *  4. Responses
+	 *    + integer id
+	 *    + (optional) any result
+	 *  5. Notifications
+	 *    + string method
+	 *    + (optional) any params
+	 */
+	
+	// Universal module definition //
+	(function (root, factory) {
+	  if (true) {
+	    // CommonJS
+	    module.exports = factory();
+	  } else if (typeof define === 'function' && define.amd) {
+	    // AMD
+	    define([], function () {
+	      return (root.Channel = factory());
+	    });
+	  } else {
+	    // Global Variables
+	    root.Channel = factory();
+	  }
+	}(this, function () {
+	  "use strict";
+	  var Channel = (function() {
+	
+	    // current transaction id, start out at a random *odd* number between 1 and a million
+	    // There is one current transaction counter id per page, and it's shared between
+	    // channel instances.  That means of all messages posted from a single javascript
+	    // evaluation context, we'll never have two with the same id.
+	    var s_curTranId = Math.floor(Math.random()*1000001);
+	
+	    // no two bound channels in the same javascript evaluation context may have the same origin, scope, and window.
+	    // further if two bound channels have the same window and scope, they may not have *overlapping* origins
+	    // (either one or both support '*').  This restriction allows a single onMessage handler to efficiently
+	    // route messages based on origin and scope.  The s_boundChans maps origins to scopes, to message
+	    // handlers.  Request and Notification messages are routed using this table.
+	    // Finally, channels are inserted into this table when built, and removed when destroyed.
+	    var s_boundChans = { };
+	
+	    // add a channel to s_boundChans, throwing if a dup exists
+	    function s_addBoundChan(win, origin, scope, handler) {
+	        function hasWin(arr) {
+	            for (var i = 0; i < arr.length; i++) if (arr[i].win === win) return true;
+	            return false;
+	        }
+	
+	        // does she exist?
+	        var exists = false;
+	
+	        if (origin === '*') {
+	            // we must check all other origins, sadly.
+	            for (var k in s_boundChans) {
+	                if (!s_boundChans.hasOwnProperty(k)) continue;
+	                if (k === '*') continue;
+	                if (typeof s_boundChans[k][scope] === 'object') {
+	                    exists = hasWin(s_boundChans[k][scope]);
+	                    if (exists) break;
+	                }
+	            }
+	        } else {
+	            // we must check only '*'
+	            if ((s_boundChans['*'] && s_boundChans['*'][scope])) {
+	                exists = hasWin(s_boundChans['*'][scope]);
+	            }
+	            if (!exists && s_boundChans[origin] && s_boundChans[origin][scope])
+	            {
+	                exists = hasWin(s_boundChans[origin][scope]);
+	            }
+	        }
+	        if (exists) throw "A channel is already bound to the same window which overlaps with origin '"+ origin +"' and has scope '"+scope+"'";
+	
+	        if (typeof s_boundChans[origin] != 'object') s_boundChans[origin] = { };
+	        if (typeof s_boundChans[origin][scope] != 'object') s_boundChans[origin][scope] = [ ];
+	        s_boundChans[origin][scope].push({win: win, handler: handler});
+	    }
+	
+	    function s_removeBoundChan(win, origin, scope) {
+	        var arr = s_boundChans[origin][scope];
+	        for (var i = 0; i < arr.length; i++) {
+	            if (arr[i].win === win) {
+	                arr.splice(i,1);
+	            }
+	        }
+	        if (s_boundChans[origin][scope].length === 0) {
+	            delete s_boundChans[origin][scope];
+	        }
+	    }
+	
+	    function s_isArray(obj) {
+	        if (Array.isArray) return Array.isArray(obj);
+	        else {
+	            return (obj.constructor.toString().indexOf("Array") != -1);
+	        }
+	    }
+	
+	    // No two outstanding outbound messages may have the same id, period.  Given that, a single table
+	    // mapping "transaction ids" to message handlers, allows efficient routing of Callback, Error, and
+	    // Response messages.  Entries are added to this table when requests are sent, and removed when
+	    // responses are received.
+	    var s_transIds = { };
+	
+	    // class singleton onMessage handler
+	    // this function is registered once and all incoming messages route through here.  This
+	    // arrangement allows certain efficiencies, message data is only parsed once and dispatch
+	    // is more efficient, especially for large numbers of simultaneous channels.
+	    var s_onMessage = function(e) {
+	        try {
+	          var m = JSON.parse(e.data);
+	          if (typeof m !== 'object' || m === null) throw "malformed";
+	        } catch(e) {
+	          // just ignore any posted messages that do not consist of valid JSON
+	          return;
+	        }
+	
+	        var w = e.source;
+	        var o = e.origin;
+	        var s, i, meth;
+	
+	        if (typeof m.method === 'string') {
+	            var ar = m.method.split('::');
+	            if (ar.length == 2) {
+	                s = ar[0];
+	                meth = ar[1];
+	            } else {
+	                meth = m.method;
+	            }
+	        }
+	
+	        if (typeof m.id !== 'undefined') i = m.id;
+	
+	        // w is message source window
+	        // o is message origin
+	        // m is parsed message
+	        // s is message scope
+	        // i is message id (or undefined)
+	        // meth is unscoped method name
+	        // ^^ based on these factors we can route the message
+	
+	        // if it has a method it's either a notification or a request,
+	        // route using s_boundChans
+	        if (typeof meth === 'string') {
+	            var delivered = false;
+	            if (s_boundChans[o] && s_boundChans[o][s]) {
+	                for (var j = 0; j < s_boundChans[o][s].length; j++) {
+	                    if (s_boundChans[o][s][j].win === w) {
+	                        s_boundChans[o][s][j].handler(o, meth, m);
+	                        delivered = true;
+	                        break;
+	                    }
+	                }
+	            }
+	
+	            if (!delivered && s_boundChans['*'] && s_boundChans['*'][s]) {
+	                for (var j = 0; j < s_boundChans['*'][s].length; j++) {
+	                    if (s_boundChans['*'][s][j].win === w) {
+	                        s_boundChans['*'][s][j].handler(o, meth, m);
+	                        break;
+	                    }
+	                }
+	            }
+	        }
+	        // otherwise it must have an id (or be poorly formed
+	        else if (typeof i != 'undefined') {
+	            if (s_transIds[i]) s_transIds[i](o, meth, m);
+	        }
+	    };
+	
+	    // Setup postMessage event listeners
+	    if (window.addEventListener) window.addEventListener('message', s_onMessage, false);
+	    else if(window.attachEvent) window.attachEvent('onmessage', s_onMessage);
+	
+	    /* a messaging channel is constructed from a window and an origin.
+	     * the channel will assert that all messages received over the
+	     * channel match the origin
+	     *
+	     * Arguments to Channel.build(cfg):
+	     *
+	     *   cfg.window - the remote window with which we'll communicate
+	     *   cfg.origin - the expected origin of the remote window, may be '*'
+	     *                which matches any origin
+	     *   cfg.scope  - the 'scope' of messages.  a scope string that is
+	     *                prepended to message names.  local and remote endpoints
+	     *                of a single channel must agree upon scope. Scope may
+	     *                not contain double colons ('::').
+	     *   cfg.debugOutput - A boolean value.  If true and window.console.log is
+	     *                a function, then debug strings will be emitted to that
+	     *                function.
+	     *   cfg.postMessageObserver - A function that will be passed two arguments,
+	     *                an origin and a message.  It will be passed these immediately
+	     *                before messages are posted.
+	     *   cfg.gotMessageObserver - A function that will be passed two arguments,
+	     *                an origin and a message.  It will be passed these arguments
+	     *                immediately after they pass scope and origin checks, but before
+	     *                they are processed.
+	     *   cfg.onReady - A function that will be invoked when a channel becomes "ready",
+	     *                this occurs once both sides of the channel have been
+	     *                instantiated and an application level handshake is exchanged.
+	     *                the onReady function will be passed a single argument which is
+	     *                the channel object that was returned from build().
+	     *   cfg.reconnect - A boolean value - if true, the channel allows reconnection
+	     *                useful when the page in a child frame is reloaded and wants
+	     *                to re-establish connection with parent window using the same
+	     *                origin, scope and bindings.
+	     *   cfg.publish - A boolean value. If true, bind will automatically publish
+	     *                the method on the remote side. The method will be published under
+	     *                channelObject.remote, but it will not be available before the onReady
+	     *                callback is called on the other side.
+	     *   cfg.remote - An array of method names for which stubs should be generated without
+	     *                waiting for remote end to publish them. A string (for a single method name)
+	     *                is also accepted. This allows methods under channelObject.remote to be called
+	     *                also before onReady callback is called; the invocations will be queued until
+	     *                the channel is ready. If the methods do not exist on remote side, the
+	     *                error callback will be called.
+	     */
+	    return {
+	        build: function(cfg) {
+	            var debug = function(m) {
+	                if (cfg.debugOutput && window.console && window.console.log) {
+	                    // try to stringify, if it doesn't work we'll let javascript's built in toString do its magic
+	                    try {
+	                        if (typeof m !== 'string') {
+	                            m = JSON.stringify(m);
+	                        }
+	                    }
+	                    catch(e) {
+	                    }
+	                    window.console.log("["+chanId+"] " + m);
+	                }
+	            };
+	
+	            /* browser capabilities check */
+	            if (!window.postMessage) throw("jschannel cannot run this browser, no postMessage");
+	            if (!window.JSON || !window.JSON.stringify || ! window.JSON.parse) {
+	                throw("jschannel cannot run this browser, no JSON parsing/serialization");
+	            }
+	
+	            /* basic argument validation */
+	            if (typeof cfg != 'object') throw("Channel build invoked without a proper object argument");
+	
+	            if (!cfg.window || !cfg.window.postMessage) throw("Channel.build() called without a valid window argument");
+	
+	            /* we'd have to do a little more work to be able to run multiple channels that intercommunicate the same
+	             * window...  Not sure if we care to support that */
+	            if (window === cfg.window) throw("target window is same as present window -- not allowed");
+	
+	            // let's require that the client specify an origin.  if we just assume '*' we'll be
+	            // propagating unsafe practices.  that would be lame.
+	            var validOrigin = false;
+	            if (typeof cfg.origin === 'string') {
+	                var oMatch;
+	                if (cfg.origin === "*") validOrigin = true;
+	                // allow valid domains under http and https.  Also, trim paths off otherwise valid origins.
+	                else if (null !== (oMatch = cfg.origin.match(/^https?:\/\/(?:[-a-zA-Z0-9_\.])+(?::\d+)?/))) {
+	                    cfg.origin = oMatch[0].toLowerCase();
+	                    validOrigin = true;
+	                }
+	            }
+	
+	            if (!validOrigin) throw ("Channel.build() called with an invalid origin");
+	
+	            if (typeof cfg.scope !== 'undefined') {
+	                if (typeof cfg.scope !== 'string') throw 'scope, when specified, must be a string';
+	                if (cfg.scope.split('::').length > 1) throw "scope may not contain double colons: '::'";
+	            } else {
+	                cfg.scope = "__default";
+	            }
+	
+	            /* private variables */
+	            // generate a random and psuedo unique id for this channel
+	            var chanId = (function () {
+	                var text = "";
+	                var alpha = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	                for(var i=0; i < 5; i++) text += alpha.charAt(Math.floor(Math.random() * alpha.length));
+	                return text;
+	            })();
+	
+	            // registrations: mapping method names to call objects
+	            var regTbl = { };
+	            // current oustanding sent requests
+	            var outTbl = { };
+	            // current oustanding received requests
+	            var inTbl = { };
+	            // are we ready yet?  when false we will block outbound messages.
+	            var ready = false;
+	            var pendingQueue = [ ];
+	            var publishQueue = [ ];
+	
+	            var createTransaction = function(id,origin,callbacks) {
+	                var shouldDelayReturn = false;
+	                var completed = false;
+	
+	                return {
+	                    origin: origin,
+	                    invoke: function(cbName, v) {
+	                        // verify in table
+	                        if (!inTbl[id]) throw "attempting to invoke a callback of a nonexistent transaction: " + id;
+	                        // verify that the callback name is valid
+	                        var valid = false;
+	                        for (var i = 0; i < callbacks.length; i++) if (cbName === callbacks[i]) { valid = true; break; }
+	                        if (!valid) throw "request supports no such callback '" + cbName + "'";
+	
+	                        // send callback invocation
+	                        postMessage({ id: id, callback: cbName, params: v});
+	                    },
+	                    error: function(error, message) {
+	                        completed = true;
+	                        // verify in table
+	                        if (!inTbl[id]) throw "error called for nonexistent message: " + id;
+	
+	                        // remove transaction from table
+	                        delete inTbl[id];
+	
+	                        // send error
+	                        postMessage({ id: id, error: error, message: message });
+	                    },
+	                    complete: function(v) {
+	                        completed = true;
+	                        // verify in table
+	                        if (!inTbl[id]) throw "complete called for nonexistent message: " + id;
+	                        // remove transaction from table
+	                        delete inTbl[id];
+	                        // send complete
+	                        postMessage({ id: id, result: v });
+	                    },
+	                    delayReturn: function(delay) {
+	                        if (typeof delay === 'boolean') {
+	                            shouldDelayReturn = (delay === true);
+	                        }
+	                        return shouldDelayReturn;
+	                    },
+	                    completed: function() {
+	                        return completed;
+	                    }
+	                };
+	            };
+	
+	            var setTransactionTimeout = function(transId, timeout, method) {
+	              return window.setTimeout(function() {
+	                if (outTbl[transId]) {
+	                  // XXX: what if client code raises an exception here?
+	                  var msg = "timeout (" + timeout + "ms) exceeded on method '" + method + "'";
+	                  if (outTbl[transId].error) {
+	                      outTbl[transId].error("timeout_error", msg);
+	                  }
+	                  delete outTbl[transId];
+	                  delete s_transIds[transId];
+	                }
+	              }, timeout);
+	            };
+	
+	            var onMessage = function(origin, method, m) {
+	                // if an observer was specified at allocation time, invoke it
+	                if (typeof cfg.gotMessageObserver === 'function') {
+	                    // pass observer a clone of the object so that our
+	                    // manipulations are not visible (i.e. method unscoping).
+	                    // This is not particularly efficient, but then we expect
+	                    // that message observers are primarily for debugging anyway.
+	                    try {
+	                        cfg.gotMessageObserver(origin, m);
+	                    } catch (e) {
+	                        debug("gotMessageObserver() raised an exception: " + e.toString());
+	                    }
+	                }
+	
+	                // now, what type of message is this?
+	                if (m.id && method) {
+	                    inTbl[m.id] = { };
+	                    var trans = createTransaction(m.id, origin, m.callbacks ? m.callbacks : [ ]);
+	                    // a request!  do we have a registered handler for this request?
+	                    if (regTbl[method]) {
+	                        try {
+	                            // callback handling.  we'll magically create functions inside the parameter list for each
+	                            // callback
+	                            if (m.callbacks && s_isArray(m.callbacks) && m.callbacks.length > 0) {
+	                                for (var i = 0; i < m.callbacks.length; i++) {
+	                                    var path = m.callbacks[i];
+	                                    var obj = m.params;
+	                                    var pathItems = path.split('/');
+	                                    for (var j = 0; j < pathItems.length - 1; j++) {
+	                                        var cp = pathItems[j];
+	                                        if (typeof obj[cp] !== 'object') obj[cp] = { };
+	                                        obj = obj[cp];
+	                                    }
+	                                    obj[pathItems[pathItems.length - 1]] = (function() {
+	                                        var cbName = path;
+	                                        return function(params) {
+	                                            return trans.invoke(cbName, params);
+	                                        };
+	                                    })();
+	                                }
+	                            }
+	                            var resp = regTbl[method](trans, m.params);
+	                            if (!trans.delayReturn() && !trans.completed()) trans.complete(resp);
+	                        } catch(e) {
+	                            // automagic handling of exceptions:
+	                            var error = "runtime_error";
+	                            var message = null;
+	                            // * if it's a string then it gets an error code of 'runtime_error' and string is the message
+	                            if (typeof e === 'string') {
+	                                message = e;
+	                            } else if (typeof e === 'object') {
+	                                // if it's an Error instance we use the constructor name to set the error property
+	                                // and we just copy the error message
+	                                if (e instanceof Error) {
+	                                    error = e.constructor.name;
+	                                    message = e.message;
+	                                }
+	                                // Otherwise, it's either an array or an object
+	                                // * if it's an array of length two, then  array[0] is the code, array[1] is the error message
+	                                else if (e && s_isArray(e) && e.length == 2) {
+	                                    error = e[0];
+	                                    message = e[1];
+	                                }
+	                                // * if it's an object then we'll look form error and message parameters
+	                                else if (typeof e.error === 'string') {
+	                                    error = e.error;
+	                                    if (!e.message) message = "";
+	                                    else if (typeof e.message === 'string') message = e.message;
+	                                    else e = e.message; // let the stringify/toString message give us a reasonable verbose error string
+	                                }
+	                            }
+	
+	                            // message is *still* null, let's try harder
+	                            if (message === null) {
+	                                try {
+	                                    message = JSON.stringify(e);
+	                                    /* On MSIE8, this can result in 'out of memory', which
+	                                     * leaves message undefined. */
+	                                    if (typeof(message) == 'undefined')
+	                                      message = e.toString();
+	                                } catch (e2) {
+	                                    message = e.toString();
+	                                }
+	                            }
+	
+	                            trans.error(error,message);
+	                        }
+	                    } else { // if no method found, send error
+	                        trans.error("method_not_found", "No method '" + method + "' was (yet) bound by the provider");
+	                    }
+	                } else if (m.id && m.callback) {
+	                    if (!outTbl[m.id] ||!outTbl[m.id].callbacks || !outTbl[m.id].callbacks[m.callback])
+	                    {
+	                        debug("ignoring invalid callback, id:"+m.id+ " (" + m.callback +")");
+	                    } else {
+	                        // XXX: what if client code raises an exception here?
+	                        outTbl[m.id].callbacks[m.callback](m.params);
+	                    }
+	                } else if (m.id) {
+	                    if (!outTbl[m.id]) {
+	                        debug("ignoring invalid response: " + m.id);
+	                    } else {
+	                        // XXX: what if client code raises an exception here?
+	                        if (m.error) {
+	                            // We might not have an error callback
+	                            if(outTbl[m.id].error) {
+	                                outTbl[m.id].error(m.error, m.message);
+	                            }
+	                        } else {
+	                            // But we always have a success callback
+	                            if (m.result !== undefined) {
+	                                outTbl[m.id].success(m.result);
+	                            } else {
+	                                outTbl[m.id].success();
+	                            }
+	                        }
+	                        delete outTbl[m.id];
+	                        delete s_transIds[m.id];
+	                    }
+	                } else if (method) {
+	                    // tis a notification.
+	                    if (regTbl[method]) {
+	                        // yep, there's a handler for that.
+	                        // transaction has only origin for notifications.
+	                        regTbl[method]({ origin: origin }, m.params);
+	                        // if the client throws, we'll just let it bubble out
+	                        // what can we do?  Also, here we'll ignore return values
+	                    }
+	                }
+	            };
+	
+	            // now register our bound channel for msg routing
+	            s_addBoundChan(cfg.window, cfg.origin, cfg.scope, onMessage);
+	
+	            // scope method names based on cfg.scope specified when the Channel was instantiated
+	            var scopeMethod = function(m) {
+	                return [cfg.scope, m].join("::");
+	            };
+	
+	            // a small wrapper around postmessage whose primary function is to handle the
+	            // case that clients start sending messages before the other end is "ready"
+	            var postMessage = function(msg, force) {
+	                if (!msg) throw "postMessage called with null message";
+	
+	                // delay posting if we're not ready yet.
+	                if (!force && !ready) {
+	                    debug("queue message: " + JSON.stringify(msg));
+	                    pendingQueue.push(msg);
+	                } else {
+	                    if (typeof cfg.postMessageObserver === 'function') {
+	                        try {
+	                            cfg.postMessageObserver(cfg.origin, msg);
+	                        } catch (e) {
+	                            debug("postMessageObserver() raised an exception: " + e.toString());
+	                        }
+	                    }
+	                    debug("post message: " + JSON.stringify(msg) + " with origin " + cfg.origin);
+	                    cfg.window.postMessage(JSON.stringify(msg), cfg.origin);
+	                }
+	            };
+	
+	            var onReady = function(trans, params) {
+	                debug('ready msg received');
+	                if (ready && !cfg.reconnect) {
+	                    throw "received ready message while in ready state.";
+	                }
+	                ready = true;
+	
+	                // only append suffix to chanId once:
+	                if (chanId.length < 6) {
+		                if (params.type === 'publish-request') {
+		                    chanId += '-R';
+		                } else {
+		                    chanId += '-L';
+		                }
+	                }
+	                debug('ready msg accepted.');
+	
+	                if (params.type === 'publish-request') {
+	                    obj.notify({ method: '__ready', params: {
+	                        type:'publish-reply',
+	                        publish: publishQueue
+	                    } });
+	                }
+	
+	                for (var i = 0; i < params.publish.length; i++) {
+	                    if (params.publish[i].action === "bind") {
+	                        createStubs([params.publish[i].method], obj.remote);
+	                    } else { // unbind
+	                        delete obj.remote[params.publish[i].method];
+	                    }
+	                }
+	
+	                //unbind ready handler unless we allow reconnecting:
+	                if (!cfg.reconnect) {
+	                    obj.unbind('__ready', true); // now this handler isn't needed any more.
+	                }
+	
+	                // flush queue
+	                while (pendingQueue.length) {
+	                    postMessage(pendingQueue.splice(0, 1)[0]);
+	                }
+	                publishQueue = [];
+	                // invoke onReady observer if provided
+	                if (typeof cfg.onReady === 'function') cfg.onReady(obj);
+	
+	            };
+	
+	            var createStubs = function(stubList, targetObj) {
+	                stubList = [].concat(stubList); // Coerce into array, allows string to be used for single-item array
+	                var method;
+	                for(var i=0; i < stubList.length; i++) {
+	                    method = stubList[i].toString();
+	                    targetObj[method] = function(m) {
+	                        return function(params, success, error) {
+	                            if (success) {
+	                                obj.call({
+	                                    method: m,
+	                                    params: params,
+	                                    success: success,
+	                                    error: error
+	                                });
+	                            } else {
+	                                obj.notify({
+	                                    method: m,
+	                                    params: params
+	                                });
+	                            }
+	                        };
+	                    }(method);
+	                }
+	            }
+	
+	            // Dynamic publish from remote
+	            var onBind = function(trans, method) {
+	                createStubs([method], obj.remote);
+	            };
+	
+	            // Dynamic unpublish from remote
+	            var onUnbind = function(trans, method) {
+	                if (obj.remote[method]) {
+	                    delete obj.remote[method];
+	                }
+	            };
+	
+	            var obj = {
+	
+	                remote: {},
+	
+	                // tries to unbind a bound message handler.  returns false if not possible
+	                unbind: function (method, doNotPublish) {
+	                    if (regTbl[method]) {
+	                        if (!(delete regTbl[method])) throw ("can't delete method: " + method);
+	                        if (cfg.publish && ! doNotPublish) {
+	                            if (ready) {
+	                                obj.notify({ method: '__unbind', params: method });
+	                            } else {
+	                                publishQueue.push({ action: 'unbind', method: method });
+	                            }
+	                        }
+	                        return true;
+	                    }
+	                    return false;
+	                },
+	                bind: function (method, cb, doNotPublish) {
+	                    if (!method || typeof method !== 'string') throw "'method' argument to bind must be string";
+	                    if (!cb || typeof cb !== 'function') throw "callback missing from bind params";
+	
+	                    if (regTbl[method]) throw "method '"+method+"' is already bound!";
+	                    regTbl[method] = cb;
+	                    if (cfg.publish && ! doNotPublish) {
+	                        if (ready) {
+	                            obj.notify({ method: '__bind', params: method });
+	                        } else {
+	                            publishQueue.push({ action: 'bind', method: method });
+	                        }
+	                    }
+	                    return this;
+	                },
+	                call: function(m) {
+	                    if (!m) throw 'missing arguments to call function';
+	                    if (!m.method || typeof m.method !== 'string') throw "'method' argument to call must be string";
+	                    if (!m.success || typeof m.success !== 'function') throw "'success' callback missing from call";
+	
+	                    // now it's time to support the 'callback' feature of jschannel.  We'll traverse the argument
+	                    // object and pick out all of the functions that were passed as arguments.
+	                    var callbacks = { };
+	                    var callbackNames = [ ];
+	                    var seen = [ ];
+	
+	                    var pruneFunctions = function (path, obj) {
+	                        if (seen.indexOf(obj) >= 0) {
+	                            throw "params cannot be a recursive data structure"
+	                        }
+	                        seen.push(obj);
+	
+	                        if (typeof obj === 'object') {
+	                            for (var k in obj) {
+	                                if (!obj.hasOwnProperty(k)) continue;
+	                                var np = path + (path.length ? '/' : '') + k;
+	                                if (typeof obj[k] === 'function') {
+	                                    callbacks[np] = obj[k];
+	                                    callbackNames.push(np);
+	                                    delete obj[k];
+	                                } else if (typeof obj[k] === 'object') {
+	                                    pruneFunctions(np, obj[k]);
+	                                }
+	                            }
+	                        }
+	                    };
+	                    pruneFunctions("", m.params);
+	
+	                    // build a 'request' message and send it
+	                    var msg = { id: s_curTranId, method: scopeMethod(m.method), params: m.params };
+	                    if (callbackNames.length) msg.callbacks = callbackNames;
+	
+	                    if (m.timeout)
+	                      // XXX: This function returns a timeout ID, but we don't do anything with it.
+	                      // We might want to keep track of it so we can cancel it using clearTimeout()
+	                      // when the transaction completes.
+	                      setTransactionTimeout(s_curTranId, m.timeout, scopeMethod(m.method));
+	
+	                    // insert into the transaction table
+	                    outTbl[s_curTranId] = { callbacks: callbacks, error: m.error, success: m.success };
+	                    s_transIds[s_curTranId] = onMessage;
+	
+	                    // increment current id
+	                    s_curTranId++;
+	
+	                    postMessage(msg);
+	                },
+	                notify: function(m) {
+	                    if (!m) throw 'missing arguments to notify function';
+	                    if (!m.method || typeof m.method !== 'string') throw "'method' argument to notify must be string";
+	
+	                    // no need to go into any transaction table
+	                    postMessage({ method: scopeMethod(m.method), params: m.params });
+	                },
+	                destroy: function () {
+	                    s_removeBoundChan(cfg.window, cfg.origin, cfg.scope);
+	                    if (window.removeEventListener) window.removeEventListener('message', onMessage, false);
+	                    else if(window.detachEvent) window.detachEvent('onmessage', onMessage);
+	                    ready = false;
+	                    regTbl = { };
+	                    inTbl = { };
+	                    outTbl = { };
+	                    cfg.origin = null;
+	                    pendingQueue = [ ];
+	                    debug("channel destroyed");
+	                    chanId = "";
+	                }
+	            };
+	
+	            obj.bind('__ready', onReady, true);
+	            obj.bind('__bind', onBind, true);
+	            obj.bind('__unbind', onUnbind, true);
+	            if (cfg.remote) {
+	                createStubs(cfg.remote, obj.remote);
+	            }
+	            setTimeout(function() {
+	                if (chanId.length > 0) { // The channel might already have been destroyed
+	                    postMessage({ method: scopeMethod('__ready'), params: {
+	                        type: "publish-request",
+	                        publish: publishQueue
+	                    } }, true);
+	                }
+	
+	            }, 0);
+	
+	            return obj;
+	        }
+	    };
+	  })();
+	
+	
+	  return Channel;
+	}));
+
 
 /***/ },
 /* 51 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// API available to apps
+	var WindowManager = __webpack_require__(24);
+	var FileExplorer = __webpack_require__(52);
+	
+	module.exports = {
+	  open(params) {
+	    console.log("=============");
+	    console.log(params);
+	
+	    // open text editor and include path in url
+	    // find text editor
+	
+	    DocumentHost.get("Silk/appDefaults", params.mime).then(function (data) {
+	      function openWindow(title) {
+	        // get app id
+	        var apps = WindowManager.appData;
+	        var app;
+	        for (var i = 0; i < apps.length; i++) {
+	          app = apps[i];
+	          if (app.title === title) {
+	            break;
+	          }
+	        }
+	        console.log(app);
+	        app.url = app.url + '?file=' + encodeURIComponent(params.path);
+	        WindowManager.open(app.id, app);
+	
+	        // clone app to not change original url
+	        //app = JSON.parse(JSON.stringify(app));
+	        //app.url = app.url + '?file=' + encodeURIComponent(params.path);
+	        //try {
+	        //  var win = new Win(app, windows, windowOrder);
+	        //  win.start();
+	        //  win.open();
+	        //} catch (e) {
+	        //  alert('error opening file');
+	        //}
+	      }
+	
+	      console.log(data);
+	
+	      // open using default program
+	      if (data.default !== "") {
+	        openWindow(data.default);
+	      }
+	      // if one app, use it if it is not for *.
+	      else if (data.available.length < 2 && data.mime != "*") {
+	          openWindow(data.available[0]);
+	        }
+	        // let user choose program
+	        else {
+	            var html = '<div class="title">Choose App To Open <br>';
+	            html += params.path;
+	            html += '</div> <div class="content"><ul>';
+	            for (var i = 0; i < data.available.length; ++i) {
+	              html += "<li>";
+	              html += data.available[i];
+	              html += "</li>";
+	            }
+	            html += '</ul> <lable><input type="checkbox" checked> Always Use This App </label><div><button>Cancel</button></div></div>';
+	            $("#appNotifications").append(html);
+	            $("#appNotifications").css("display", "block");
+	
+	            // set up click hander
+	            $("#appNotifications .content button").click(function (e) {
+	              $("#appNotifications").css("display", "none");
+	              $("#appNotifications").html("");
+	            });
+	            $("#appNotifications .content li").click(function (e) {
+	              console.log($(e.target).html());
+	              openWindow($(e.target).html());
+	              // if chewckbox is checked, set up default app
+	              if ($('#appNotifications input').is(':checked') == true) {
+	                DocumentHost.get("Silk/setDefault", {
+	                  mime: params.mime,
+	                  app: $(e.target).html()
+	                }).then(function () {});
+	              }
+	              $("#appNotifications").css("display", "none");
+	              $("#appNotifications").html("");
+	            });
+	          }
+	    }).catch(console.error);
+	  },
+	  'filePicker': function (params, message, send) {
+	
+	    function indexFromId(list, id) {
+	      for (var i = 0; i < list.length; i++) {
+	        if (list[i].id === id) {
+	          return i;
+	        }
+	      }
+	    }
+	
+	    console.log('filePicker');
+	    console.log(this);
+	    var self = this;
+	    var fileExplorer = new FileExplorer(this, function (e, d) {
+	      var index = indexFromId(fileExplorer.id);
+	      self.popups.splice(index, 1);
+	      send(e, d);
+	    });
+	    self.popups.push(fileExplorer);
+	  }
+	};
+
+/***/ },
+/* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var $ = __webpack_require__(44);
+	
+	function FileExplorer(app, cb) {
+	  var self = this;
+	  self.id = Math.random() + '-' + new Date().getTime();
+	  self.component = 'file-explorer';
+	  self.channel = null;
+	  this.cb = cb;
+	}
+	
+	FileExplorer.prototype.createChannel = function (el) {
+	  var self = this;
+	  var context = $(el).find('iframe')[0].contentWindow;
+	  var channel = new WinAbs(context);
+	  channel.add('open', function (data) {
+	    console.log(data);
+	    self.cb(null, data);
+	  });
+	};
+	
+	FileExplorer.prototype.constructor = FileExplorer;
+	
+	module.exports = FileExplorer;
+
+/***/ },
+/* 53 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __vue_script__, __vue_template__
+	__webpack_require__(54)
+	__vue_script__ = __webpack_require__(56)
+	__vue_template__ = __webpack_require__(57)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), true)
+	  if (!hotAPI.compatible) return
+	  var id = "/Users/Micaiah/dev/silk-wm/Sleek/public/components/fileExplorer.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
+
+/***/ },
+/* 54 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(55);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(22)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-48b0c012&file=fileExplorer.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./fileExplorer.vue", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-48b0c012&file=fileExplorer.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./fileExplorer.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 55 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(8)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n.file-picker-iframe {\n  height: 300px;\n  width: 500px;\n}\n", "", {"version":3,"sources":["/./public/components/fileExplorer.vue?d974ced6"],"names":[],"mappings":";AA+CA;EACA,cAAA;EACA,aAAA;CACA","file":"fileExplorer.vue","sourcesContent":["<template>\n  <div id=\"filePicker\" class=\"content\">\n    <div v-if=\"$loadingAsyncData\">Loading...</div>\n    <div v-if=\"!$loadingAsyncData\">\n      <iframe @load=\"createChannel\" class=\"file-picker-iframe\" :src=\"baseURL + fileSystems[selectedFileSystem].url + '?filePicker=file&type=*'\"></iframe>\n    </div>\n  </div>\n</template>\n\n<script>\n\n  import Remote from '../js/remote.js';\n  export default {\n    data () {\n      var baseURL = 'http://localhost:3000/';\n//      if(Remote.isRemote) {\n//        baseURL = Remote.fixURL('base', baseURL);\n//      }\n      console.log(baseURL);\n      return {\n        baseURL: baseURL,\n        fileSystems: [],\n        selectedFileSystem: 0\n      }\n    },\n    props: ['popup'],\n    asyncData: function (resolve, reject) {\n      DocumentHost.get('sleek/fileSystems')\n        .then(function (data) {\n          console.log('result', data);\n          resolve({\n            fileSystems: data\n          });\n        }, function (error) {\n          console.log('error', error);\n        });\n    },\n    methods: {\n      createChannel () {\n        this.popup.createChannel(this.$el);\n        console.log(this);\n      }\n    }\n  }\n</script>\n\n<style>\n.file-picker-iframe {\n  height: 300px;\n  width: 500px;\n}\n</style>\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _remote = __webpack_require__(43);
+	
+	var _remote2 = _interopRequireDefault(_remote);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  data: function data() {
+	    var baseURL = 'http://localhost:3000/';
+	
+	    console.log(baseURL);
+	    return {
+	      baseURL: baseURL,
+	      fileSystems: [],
+	      selectedFileSystem: 0
+	    };
+	  },
+	
+	  props: ['popup'],
+	  asyncData: function asyncData(resolve, reject) {
+	    DocumentHost.get('sleek/fileSystems').then(function (data) {
+	      console.log('result', data);
+	      resolve({
+	        fileSystems: data
+	      });
+	    }, function (error) {
+	      console.log('error', error);
+	    });
+	  },
+	  methods: {
+	    createChannel: function createChannel() {
+	      this.popup.createChannel(this.$el);
+	      console.log(this);
+	    }
+	  }
+	};
+
+/***/ },
+/* 57 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<div id=\"filePicker\" class=\"content\">\n  <div v-if=\"$loadingAsyncData\">Loading...</div>\n  <div v-if=\"!$loadingAsyncData\">\n    <iframe @load=\"createChannel\" class=\"file-picker-iframe\" :src=\"baseURL + fileSystems[selectedFileSystem].url + '?filePicker=file&type=*'\"></iframe>\n  </div>\n</div>\n";
+
+/***/ },
+/* 58 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<div id=\"desktop\">\n  <div v-for=\"window in windows\" class=\"window\" v-show=\"!window.minimized\" :style=\"{zIndex: window.zIndex}\">\n    <iframe v-if=\"window.running\" class=\"content\" @load=\"buildChannel($index)\" :src=\"window.url\"\n            data-name=\"{{window.title}}\"></iframe>\n    <div class=\"popup\" v-if=\"window.popups\" v-for=\"popup in window.popups\">\n      <component :popup=\"popup\" :is=\"popup.component\"></component>\n    </div>\n  </div>\n  <div id=\"appNotifications\"></div>\n</div>\n";
+
+/***/ },
+/* 59 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<h1>App</h1>\n<div v-if=\"!ready\" transition=\"fade\">\n  <load-screen></load-screen>\n</div>\n\n<menu></menu>\n<taskbar></taskbar>\n<desktop></desktop>\n\n";

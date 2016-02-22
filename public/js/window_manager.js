@@ -46,7 +46,7 @@ WindowManager.prototype.findAppById = function (id) {
  */
 WindowManager.prototype.windowsForApp = function (appId) {
   var results = [];
-  this.windows.forEach((item) => {
+  this.windows.forEach(function (item) {
     if(item.id === appId) {
       results.push(item);
     }
@@ -63,7 +63,13 @@ WindowManager.prototype.windowsForApp = function (appId) {
  */
 WindowManager.prototype.open = function (id, app) {
   app = app || this.findAppById(id);
+
   if(app.multipleWindows === false) {
+    /* App only wants one window open at a time.
+     * Check if app already has a window open,
+     * and if so we make it active instead of
+     * opening a new window.
+     */
     var appWindows = this.windowsForApp(id);
     if(appWindows.length > 0) {
       // find index of first item
@@ -83,6 +89,7 @@ WindowManager.prototype.open = function (id, app) {
   win.windowId = this.windowId;
   this.windowId += 1;
   win.running = true;
+  win.popups = [];
   this.windows.push(win);
   this.maximizeWindow(this.windows.length - 1);
   return win;
@@ -108,13 +115,14 @@ WindowManager.prototype.reorder = function () {
  * @param {number} index - index of window in window array
  */
 WindowManager.prototype.maximizeWindow = function (index) {
-  this.windows.forEach((item, index)=> {
+  var self = this;
+  self.windows.forEach(function (item, index) {
     if(item.minimized === false) {
-      this.minimizeWindow(index);
+      self.minimizeWindow(index);
     }
   });
-  this.windows[index].minimized = false;
-  this.activeWindows.push(this.windows[index].windowId);
+  self.windows[index].minimized = false;
+  self.activeWindows.push(self.windows[index].windowId);
 };
 
 /**
