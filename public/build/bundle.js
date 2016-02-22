@@ -10204,7 +10204,7 @@
 
 	var __vue_script__, __vue_template__
 	__vue_script__ = __webpack_require__(13)
-	__vue_template__ = __webpack_require__(53)
+	__vue_template__ = __webpack_require__(59)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
@@ -20490,7 +20490,7 @@
 	var __vue_script__, __vue_template__
 	__webpack_require__(46)
 	__vue_script__ = __webpack_require__(48)
-	__vue_template__ = __webpack_require__(52)
+	__vue_template__ = __webpack_require__(58)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
@@ -20541,7 +20541,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n#desktop .window {\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  box-sizing: border-box;\n  padding-bottom: 50px;\n}\n\n.window * {\n  -webkit-user-select: none;\n}\n\n#desktop .window iframe {\n  background-color: white;\n  border: none;\n  width: 100%;\n  height: 100%;\n  margin: 0px;\n  box-sizing: border-box;\n}\n\n.window .popup {\n  position: absolute;\n  top: 50px;\n  left: 50%;\n  width: 500px;\n  height: 100px;\n  margin-left: -250px;\n  background-color: red;\n}\n", "", {"version":3,"sources":["/./public/components/desktop.vue?3acdf2f0"],"names":[],"mappings":";AAuCA;EACA,mBAAA;EACA,SAAA;EACA,UAAA;EACA,YAAA;EACA,aAAA;EACA,uBAAA;EACA,qBAAA;CACA;;AAEA;EACA,0BAAA;CACA;;AAEA;EACA,wBAAA;EACA,aAAA;EACA,YAAA;EACA,aAAA;EACA,YAAA;EACA,uBAAA;CACA;;AAEA;EACA,mBAAA;EACA,UAAA;EACA,UAAA;EACA,aAAA;EACA,cAAA;EACA,oBAAA;EACA,sBAAA;CACA","file":"desktop.vue","sourcesContent":["<template>\n  <div id=\"desktop\">\n    <div v-for=\"window in windows\" class=\"window\" v-show=\"!window.minimized\" :style=\"{zIndex: window.zIndex}\">\n      <iframe v-if=\"window.running\" class=\"content\" @load=\"buildChannel($index)\" :src=\"window.url\"\n              data-name=\"{{window.title}}\"></iframe>\n      <div class=\"popup\" v-if=\"window.popups\" v-for=\"popup in window.popups\">\n\n      </div>\n    </div>\n    <div id=\"appNotifications\"></div>\n  </div>\n</template>\n\n<script>\n  import WindowManager from '../js/window_manager';\n  import Channel from '../js/channel';\n\n  export default {\n    data() {\n      return {\n        windows: WindowManager.windows\n      }\n    },\n    methods: {\n      buildChannel (index) {\n        console.log('channel');\n        new Channel(index);\n      },\n      minimize (index) {\n        WindowManager.minimizeWindow(index);\n      },\n      close (index) {\n        WindowManager.closeWindow(index);\n      }\n    }\n  };\n</script>\n\n<style>\n  #desktop .window {\n    position: absolute;\n    top: 0px;\n    left: 0px;\n    width: 100%;\n    height: 100%;\n    box-sizing: border-box;\n    padding-bottom: 50px;\n  }\n\n  .window * {\n    -webkit-user-select: none;\n  }\n\n  #desktop .window iframe {\n    background-color: white;\n    border: none;\n    width: 100%;\n    height: 100%;\n    margin: 0px;\n    box-sizing: border-box;\n  }\n\n  .window .popup {\n    position: absolute;\n    top: 50px;\n    left: 50%;\n    width: 500px;\n    height: 100px;\n    margin-left: -250px;\n    background-color: red;\n  }\n</style>\n"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n#desktop .window {\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  width: 100%;\n  height: 100%;\n  box-sizing: border-box;\n  padding-bottom: 50px;\n}\n\n.window * {\n  -webkit-user-select: none;\n}\n\niframe {\n  background-color: white;\n  border: none;\n  width: 100%;\n  height: 100%;\n  margin: 0px;\n  box-sizing: border-box;\n}\n\n.window .popup {\n  position: fixed;\n  top: 0px;\n  left: 0px;\n  height: 100%;\n  width: 100%;\n  background-color: rgba(256, 256, 256, 0.5);\n}\n\n.window .popup .content {\n  position: absolute;\n  top: 50px;\n  left: 50%;\n  width: 500px;\n  height: 300px;\n  margin-left: -250px;\n  background-color: red;\n}\n", "", {"version":3,"sources":["/./public/components/desktop.vue?48cff294"],"names":[],"mappings":";AA6CA;EACA,mBAAA;EACA,SAAA;EACA,UAAA;EACA,YAAA;EACA,aAAA;EACA,uBAAA;EACA,qBAAA;CACA;;AAEA;EACA,0BAAA;CACA;;AAEA;EACA,wBAAA;EACA,aAAA;EACA,YAAA;EACA,aAAA;EACA,YAAA;EACA,uBAAA;CACA;;AAEA;EACA,gBAAA;EACA,SAAA;EACA,UAAA;EACA,aAAA;EACA,YAAA;EACA,2CAAA;CACA;;AAEA;EACA,mBAAA;EACA,UAAA;EACA,UAAA;EACA,aAAA;EACA,cAAA;EACA,oBAAA;EACA,sBAAA;CACA","file":"desktop.vue","sourcesContent":["<template>\n  <div id=\"desktop\">\n    <div v-for=\"window in windows\" class=\"window\" v-show=\"!window.minimized\" :style=\"{zIndex: window.zIndex}\">\n      <iframe v-if=\"window.running\" class=\"content\" @load=\"buildChannel($index)\" :src=\"window.url\"\n              data-name=\"{{window.title}}\"></iframe>\n      <div class=\"popup\" v-if=\"window.popups\" v-for=\"popup in window.popups\">\n        <component :popup=\"popup\" :is=\"popup.component\"></component>\n      </div>\n    </div>\n    <div id=\"appNotifications\"></div>\n  </div>\n</template>\n\n<script>\n  import WindowManager from '../js/window_manager';\n  import Channel from '../js/channel';\n\n  //popups\n  import FileExplorer from './fileExplorer.vue';\n\n  export default {\n    data() {\n      return {\n        windows: WindowManager.windows\n      }\n    },\n    methods: {\n      buildChannel (index) {\n        console.log('channel');\n        new Channel(index);\n      },\n      minimize (index) {\n        WindowManager.minimizeWindow(index);\n      },\n      close (index) {\n        WindowManager.closeWindow(index);\n      }\n    },\n    components: {\n      'file-explorer': FileExplorer\n    }\n  };\n</script>\n\n<style>\n  #desktop .window {\n    position: absolute;\n    top: 0px;\n    left: 0px;\n    width: 100%;\n    height: 100%;\n    box-sizing: border-box;\n    padding-bottom: 50px;\n  }\n\n  .window * {\n    -webkit-user-select: none;\n  }\n\n  iframe {\n    background-color: white;\n    border: none;\n    width: 100%;\n    height: 100%;\n    margin: 0px;\n    box-sizing: border-box;\n  }\n\n  .window .popup {\n    position: fixed;\n    top: 0px;\n    left: 0px;\n    height: 100%;\n    width: 100%;\n    background-color: rgba(256, 256, 256, 0.5);\n  }\n\n  .window .popup .content {\n    position: absolute;\n    top: 50px;\n    left: 50%;\n    width: 500px;\n    height: 300px;\n    margin-left: -250px;\n    background-color: red;\n  }\n</style>\n"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -20564,6 +20564,10 @@
 	
 	var _channel2 = _interopRequireDefault(_channel);
 	
+	var _fileExplorer = __webpack_require__(53);
+	
+	var _fileExplorer2 = _interopRequireDefault(_fileExplorer);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
@@ -20584,6 +20588,9 @@
 	    close: function close(index) {
 	      _window_manager2.default.closeWindow(index);
 	    }
+	  },
+	  components: {
+	    'file-explorer': _fileExplorer2.default
 	  }
 	};
 
@@ -21393,7 +21400,7 @@
 
 	// API available to apps
 	var WindowManager = __webpack_require__(24);
-	var FileExplorer = __webpack_require__(54);
+	var FileExplorer = __webpack_require__(52);
 	
 	module.exports = {
 	  open(params) {
@@ -21476,31 +21483,182 @@
 	    }).catch(console.error);
 	  },
 	  'filePicker': function (params, message, send) {
+	
+	    function indexFromId(list, id) {
+	      for (var i = 0; i < list.length; i++) {
+	        if (list[i].id === id) {
+	          return i;
+	        }
+	      }
+	    }
+	
+	    console.log('filePicker');
 	    console.log(this);
-	    var fileExplorer = new FileExplorer();
-	    this.popups.push(fileExplorer);
+	    var self = this;
+	    var fileExplorer = new FileExplorer(this, function (e, d) {
+	      var index = indexFromId(fileExplorer.id);
+	      self.popups.splice(index, 1);
+	      send(e, d);
+	    });
+	    self.popups.push(fileExplorer);
 	  }
 	};
 
 /***/ },
 /* 52 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "\n<div id=\"desktop\">\n  <div v-for=\"window in windows\" class=\"window\" v-show=\"!window.minimized\" :style=\"{zIndex: window.zIndex}\">\n    <iframe v-if=\"window.running\" class=\"content\" @load=\"buildChannel($index)\" :src=\"window.url\"\n            data-name=\"{{window.title}}\"></iframe>\n    <div class=\"popup\" v-if=\"window.popups\" v-for=\"popup in window.popups\">\n\n    </div>\n  </div>\n  <div id=\"appNotifications\"></div>\n</div>\n";
+	var $ = __webpack_require__(44);
+	
+	function FileExplorer(app, cb) {
+	  var self = this;
+	  self.id = Math.random() + '-' + new Date().getTime();
+	  self.component = 'file-explorer';
+	  self.channel = null;
+	  this.cb = cb;
+	}
+	
+	FileExplorer.prototype.createChannel = function (el) {
+	  var self = this;
+	  var context = $(el).find('iframe')[0].contentWindow;
+	  var channel = new WinAbs(context);
+	  channel.add('open', function (data) {
+	    console.log(data);
+	    self.cb(null, data);
+	  });
+	};
+	
+	FileExplorer.prototype.constructor = FileExplorer;
+	
+	module.exports = FileExplorer;
 
 /***/ },
 /* 53 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "\n<h1>App</h1>\n<div v-if=\"!ready\" transition=\"fade\">\n  <load-screen></load-screen>\n</div>\n\n<menu></menu>\n<taskbar></taskbar>\n<desktop></desktop>\n\n";
+	var __vue_script__, __vue_template__
+	__webpack_require__(54)
+	__vue_script__ = __webpack_require__(56)
+	__vue_template__ = __webpack_require__(57)
+	module.exports = __vue_script__ || {}
+	if (module.exports.__esModule) module.exports = module.exports.default
+	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
+	if (false) {(function () {  module.hot.accept()
+	  var hotAPI = require("vue-hot-reload-api")
+	  hotAPI.install(require("vue"), true)
+	  if (!hotAPI.compatible) return
+	  var id = "/Users/Micaiah/dev/silk-wm/Sleek/public/components/fileExplorer.vue"
+	  if (!module.hot.data) {
+	    hotAPI.createRecord(id, module.exports)
+	  } else {
+	    hotAPI.update(id, module.exports, __vue_template__)
+	  }
+	})()}
 
 /***/ },
 /* 54 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(55);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(22)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-48b0c012&file=fileExplorer.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./fileExplorer.vue", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-48b0c012&file=fileExplorer.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./fileExplorer.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 55 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(8)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n.file-picker-iframe {\n  height: 300px;\n  width: 500px;\n}\n", "", {"version":3,"sources":["/./public/components/fileExplorer.vue?d974ced6"],"names":[],"mappings":";AA+CA;EACA,cAAA;EACA,aAAA;CACA","file":"fileExplorer.vue","sourcesContent":["<template>\n  <div id=\"filePicker\" class=\"content\">\n    <div v-if=\"$loadingAsyncData\">Loading...</div>\n    <div v-if=\"!$loadingAsyncData\">\n      <iframe @load=\"createChannel\" class=\"file-picker-iframe\" :src=\"baseURL + fileSystems[selectedFileSystem].url + '?filePicker=file&type=*'\"></iframe>\n    </div>\n  </div>\n</template>\n\n<script>\n\n  import Remote from '../js/remote.js';\n  export default {\n    data () {\n      var baseURL = 'http://localhost:3000/';\n//      if(Remote.isRemote) {\n//        baseURL = Remote.fixURL('base', baseURL);\n//      }\n      console.log(baseURL);\n      return {\n        baseURL: baseURL,\n        fileSystems: [],\n        selectedFileSystem: 0\n      }\n    },\n    props: ['popup'],\n    asyncData: function (resolve, reject) {\n      DocumentHost.get('sleek/fileSystems')\n        .then(function (data) {\n          console.log('result', data);\n          resolve({\n            fileSystems: data\n          });\n        }, function (error) {\n          console.log('error', error);\n        });\n    },\n    methods: {\n      createChannel () {\n        this.popup.createChannel(this.$el);\n        console.log(this);\n      }\n    }\n  }\n</script>\n\n<style>\n.file-picker-iframe {\n  height: 300px;\n  width: 500px;\n}\n</style>\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _remote = __webpack_require__(43);
+	
+	var _remote2 = _interopRequireDefault(_remote);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  data: function data() {
+	    var baseURL = 'http://localhost:3000/';
+	
+	    console.log(baseURL);
+	    return {
+	      baseURL: baseURL,
+	      fileSystems: [],
+	      selectedFileSystem: 0
+	    };
+	  },
+	
+	  props: ['popup'],
+	  asyncData: function asyncData(resolve, reject) {
+	    DocumentHost.get('sleek/fileSystems').then(function (data) {
+	      console.log('result', data);
+	      resolve({
+	        fileSystems: data
+	      });
+	    }, function (error) {
+	      console.log('error', error);
+	    });
+	  },
+	  methods: {
+	    createChannel: function createChannel() {
+	      this.popup.createChannel(this.$el);
+	      console.log(this);
+	    }
+	  }
+	};
+
+/***/ },
+/* 57 */
 /***/ function(module, exports) {
 
-	function FileExplorer() {}
-	
-	module.exports = FileExplorer;
+	module.exports = "\n<div id=\"filePicker\" class=\"content\">\n  <div v-if=\"$loadingAsyncData\">Loading...</div>\n  <div v-if=\"!$loadingAsyncData\">\n    <iframe @load=\"createChannel\" class=\"file-picker-iframe\" :src=\"baseURL + fileSystems[selectedFileSystem].url + '?filePicker=file&type=*'\"></iframe>\n  </div>\n</div>\n";
+
+/***/ },
+/* 58 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<div id=\"desktop\">\n  <div v-for=\"window in windows\" class=\"window\" v-show=\"!window.minimized\" :style=\"{zIndex: window.zIndex}\">\n    <iframe v-if=\"window.running\" class=\"content\" @load=\"buildChannel($index)\" :src=\"window.url\"\n            data-name=\"{{window.title}}\"></iframe>\n    <div class=\"popup\" v-if=\"window.popups\" v-for=\"popup in window.popups\">\n      <component :popup=\"popup\" :is=\"popup.component\"></component>\n    </div>\n  </div>\n  <div id=\"appNotifications\"></div>\n</div>\n";
+
+/***/ },
+/* 59 */
+/***/ function(module, exports) {
+
+	module.exports = "\n<h1>App</h1>\n<div v-if=\"!ready\" transition=\"fade\">\n  <load-screen></load-screen>\n</div>\n\n<menu></menu>\n<taskbar></taskbar>\n<desktop></desktop>\n\n";
 
 /***/ }
 /******/ ]);
