@@ -11126,6 +11126,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
+	__webpack_require__(60)
 	__vue_script__ = __webpack_require__(39)
 	__vue_template__ = __webpack_require__(40)
 	module.exports = __vue_script__ || {}
@@ -11184,7 +11185,7 @@
 /* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "\n<div id=\"menu\" v-if=\"menuState.show\">\n  <h1>Apps <img @click=\"close()\" src=\"" + __webpack_require__(41) + "\"></h1>\n  <ul>\n    <li track-by=\"$index\" v-for=\"app in apps\" @click=\"open(app.id)\">\n      <img :src=\"app.icon\">{{app.title}}\n    </li>\n  </ul>\n</div>\n";
+	module.exports = "\n<div id=\"menu\" v-if=\"menuState.show\">\n  <h1>Apps <img @click=\"close()\" src=\"" + __webpack_require__(41) + "\"></h1>\n  <ul>\n    <li track-by=\"$index\" class=\"{{app.isExternal ? 'external': ''}}\" v-for=\"app in apps\" @click=\"open(app.id)\">\n      <img :src=\"app.icon\">{{app.name}}\n    </li>\n  </ul>\n</div>\n";
 
 /***/ },
 /* 41 */
@@ -21659,6 +21660,46 @@
 /***/ function(module, exports) {
 
 	module.exports = "\n<h1>App</h1>\n<div v-if=\"!ready\" transition=\"fade\">\n  <load-screen></load-screen>\n</div>\n\n<menu></menu>\n<taskbar></taskbar>\n<desktop></desktop>\n\n";
+
+/***/ },
+/* 60 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(61);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(22)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-1e37bd0a&file=menu.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./menu.vue", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-1e37bd0a&file=menu.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./menu.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(8)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n#menu li.external:hover {\n  box-shadow: 0px 3px 0px #37B37F;\n}\n", "", {"version":3,"sources":["/./public/components/menu.vue?eac3b7b6"],"names":[],"mappings":";AAmCA;EACA,gCAAA;CACA","file":"menu.vue","sourcesContent":["<template>\n  <div id=\"menu\" v-if=\"menuState.show\">\n    <h1>Apps <img @click=\"close()\" src=\"../img/Close-48.png\"></h1>\n    <ul>\n      <li track-by=\"$index\" class=\"{{app.isExternal ? 'external': ''}}\" v-for=\"app in apps\" @click=\"open(app.id)\">\n        <img :src=\"app.icon\">{{app.name}}\n      </li>\n    </ul>\n  </div>\n</template>\n\n<script>\n  import Menu from '../js/menu.js';\n  var WindowManager = require('../js/window_manager');\n  export default {\n    data () {\n      return {\n        menuState: Menu.state,\n        apps: WindowManager.appData\n      }\n    },\n    methods: {\n      close () {\n        this.menuState.show = false;\n      },\n      open (id) {\n        console.log(id);\n        WindowManager.open(id);\n        this.menuState.show = false;\n      }\n    }\n  }\n</script>\n\n<style>\n  #menu li.external:hover {\n    box-shadow: 0px 3px 0px #37B37F;\n  }\n</style>\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
 
 /***/ }
 /******/ ]);
