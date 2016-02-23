@@ -2,8 +2,8 @@
   <div id="menu" v-if="menuState.show">
     <h1>Apps <img @click="close()" src="../img/Close-48.png"></h1>
     <ul>
-      <li track-by="$index" v-for="app in apps" @click="open(app.id)">
-        <img :src="app.icon">{{app.title}}
+      <li track-by="$index" class="{{app.isExternal ? 'external': ''}}" v-for="app in apps" @click="open(app.id)">
+        <img :src="app.icon">{{app.name}}
       </li>
     </ul>
   </div>
@@ -31,3 +31,9 @@
     }
   }
 </script>
+
+<style>
+  #menu li.external:hover {
+    box-shadow: 0px 3px 0px #37B37F;
+  }
+</style>
