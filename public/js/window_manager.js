@@ -62,37 +62,55 @@ WindowManager.prototype.windowsForApp = function (appId) {
  * @return {Object} app object
  */
 WindowManager.prototype.open = function (id, app) {
+
   app = app || this.findAppById(id);
 
-  if(app.multipleWindows === false) {
-    /* App only wants one window open at a time.
-     * Check if app already has a window open,
-     * and if so we make it active instead of
-     * opening a new window.
-     */
-    var appWindows = this.windowsForApp(id);
-    if(appWindows.length > 0) {
-      // find index of first item
-      for (var i = 0; i < this.windows.length; i++) {
-        var _window = this.windows[i];
-        if(_window.windowId === appWindows[0].windowId) {
-          this.maximizeWindow(i);
-          return appWindows[0];
+  if(app.state === 'running') {
+    if(app.multipleWindows === false) {
+      /* App only wants one window open at a time.
+       * Check if app already has a window open,
+       * and if so we make it active instead of
+       * opening a new window.
+       */
+      var appWindows = this.windowsForApp(id);
+      if(appWindows.length > 0) {
+        // find index of first item
+        for (var i = 0; i < this.windows.length; i++) {
+          var _window = this.windows[i];
+          if(_window.windowId === appWindows[0].windowId) {
+            this.maximizeWindow(i);
+            return appWindows[0];
+          }
         }
       }
     }
-  }
 
-  console.log(app);
-  // clone
-  var win = JSON.parse(JSON.stringify(app));
-  win.windowId = this.windowId;
-  this.windowId += 1;
-  win.running = true;
-  win.popups = [];
-  this.windows.push(win);
-  this.maximizeWindow(this.windows.length - 1);
-  return win;
+    console.log(app);
+    // clone
+    var win = JSON.parse(JSON.stringify(app));
+    win.windowId = this.windowId;
+    this.windowId += 1;
+    win.running = true;
+    win.popups = [];
+    this.windows.push(win);
+    this.maximizeWindow(this.windows.length - 1);
+    return win;
+  } else {
+    console.log('starting app');
+    this.startApp(id, app);
+  }
+};
+
+WindowManager.prototype.startApp = function (id, app) {
+  var self = this;
+  app = app || this.findAppById(id);
+  DocumentHost.get('sleek/startApp', app.path).then(function(data) {
+    console.log('started app', data);
+    app.state = 'running';
+    self.open(id, app);
+  })
+  .catch(console.error);
+
 };
 
 /**
