@@ -17,7 +17,7 @@ WindowManager.prototype.updateAppData = function (data) {
   if('$set' in this.appData) {
     for (var i = 0; i < data.length; i++) {
       // help vue to detect the changes
-      //TODO: this will not work if the length is different from the origional data
+      //TODO: this will not work if the length is different from the original data
       this.appData.$set(i, data[i]);
     }
   } else {
