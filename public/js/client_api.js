@@ -1,6 +1,7 @@
 // API available to apps
 var WindowManager = require('./window_manager.js');
 var FileExplorer = require('./file_explorer.js');
+var $ = require('jquery');
 
 module.exports = {
   open (params) {
@@ -87,7 +88,7 @@ module.exports = {
   'filePicker': function (params, message, send) {
 
     function indexFromId(list, id) {
-      for(var i = 0; i < list.length; i++) {
+      for (var i = 0; i < list.length; i++) {
         if(list[i].id === id) {
           return i;
         }
