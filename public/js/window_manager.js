@@ -92,6 +92,8 @@ WindowManager.prototype.open = function (id, app) {
     this.windowId += 1;
     win.running = true;
     win.popups = [];
+    win.zIndex = 0;
+    win.minimized = false;
     this.windows.push(win);
     this.maximizeWindow(this.windows.length - 1);
     return win;
