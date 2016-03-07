@@ -10204,7 +10204,7 @@
 
 	var __vue_script__, __vue_template__
 	__vue_script__ = __webpack_require__(13)
-	__vue_template__ = __webpack_require__(59)
+	__vue_template__ = __webpack_require__(61)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
@@ -10244,11 +10244,11 @@
 	
 	var _menu2 = _interopRequireDefault(_menu);
 	
-	var _load = __webpack_require__(42);
+	var _load = __webpack_require__(44);
 	
 	var _load2 = _interopRequireDefault(_load);
 	
-	var _desktop = __webpack_require__(45);
+	var _desktop = __webpack_require__(47);
 	
 	var _desktop2 = _interopRequireDefault(_desktop);
 	
@@ -10741,7 +10741,7 @@
 	  if ('$set' in this.appData) {
 	    for (var i = 0; i < data.length; i++) {
 	      // help vue to detect the changes
-	      //TODO: this will not work if the length is different from the origional data
+	      //TODO: this will not work if the length is different from the original data
 	      this.appData.$set(i, data[i]);
 	    }
 	  } else {
@@ -10786,37 +10786,55 @@
 	 * @return {Object} app object
 	 */
 	WindowManager.prototype.open = function (id, app) {
+	
 	  app = app || this.findAppById(id);
 	
-	  if (app.multipleWindows === false) {
-	    /* App only wants one window open at a time.
-	     * Check if app already has a window open,
-	     * and if so we make it active instead of
-	     * opening a new window.
-	     */
-	    var appWindows = this.windowsForApp(id);
-	    if (appWindows.length > 0) {
-	      // find index of first item
-	      for (var i = 0; i < this.windows.length; i++) {
-	        var _window = this.windows[i];
-	        if (_window.windowId === appWindows[0].windowId) {
-	          this.maximizeWindow(i);
-	          return appWindows[0];
+	  if (app.state === 'running') {
+	    if (app.multipleWindows === false) {
+	      /* App only wants one window open at a time.
+	       * Check if app already has a window open,
+	       * and if so we make it active instead of
+	       * opening a new window.
+	       */
+	      var appWindows = this.windowsForApp(id);
+	      if (appWindows.length > 0) {
+	        // find index of first item
+	        for (var i = 0; i < this.windows.length; i++) {
+	          var _window = this.windows[i];
+	          if (_window.windowId === appWindows[0].windowId) {
+	            this.maximizeWindow(i);
+	            return appWindows[0];
+	          }
 	        }
 	      }
 	    }
-	  }
 	
-	  console.log(app);
-	  // clone
-	  var win = JSON.parse(JSON.stringify(app));
-	  win.windowId = this.windowId;
-	  this.windowId += 1;
-	  win.running = true;
-	  win.popups = [];
-	  this.windows.push(win);
-	  this.maximizeWindow(this.windows.length - 1);
-	  return win;
+	    console.log(app);
+	    // clone
+	    var win = JSON.parse(JSON.stringify(app));
+	    win.windowId = this.windowId;
+	    this.windowId += 1;
+	    win.running = true;
+	    win.popups = [];
+	    win.zIndex = 0;
+	    win.minimized = false;
+	    this.windows.push(win);
+	    this.maximizeWindow(this.windows.length - 1);
+	    return win;
+	  } else {
+	    console.log('starting app');
+	    this.startApp(id, app);
+	  }
+	};
+	
+	WindowManager.prototype.startApp = function (id, app) {
+	  var self = this;
+	  app = app || this.findAppById(id);
+	  DocumentHost.get('sleek/startApp', app.path).then(function (data) {
+	    console.log('started app', data);
+	    app.state = 'running';
+	    self.open(id, app);
+	  }).catch(console.error);
 	};
 	
 	/**
@@ -11126,9 +11144,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(60)
-	__vue_script__ = __webpack_require__(39)
-	__vue_template__ = __webpack_require__(40)
+	__webpack_require__(39)
+	__vue_script__ = __webpack_require__(41)
+	__vue_template__ = __webpack_require__(42)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
@@ -11146,6 +11164,46 @@
 
 /***/ },
 /* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(40);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(22)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-1e37bd0a&file=menu.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./menu.vue", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-1e37bd0a&file=menu.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./menu.vue");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(8)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n#menu li.external:hover {\n  box-shadow: 0px 3px 0px #37B37F;\n}\n", "", {"version":3,"sources":["/./public/components/menu.vue?eac3b7b6"],"names":[],"mappings":";AAmCA;EACA,gCAAA;CACA","file":"menu.vue","sourcesContent":["<template>\n  <div id=\"menu\" v-if=\"menuState.show\">\n    <h1>Apps <img @click=\"close()\" src=\"../img/Close-48.png\"></h1>\n    <ul>\n      <li track-by=\"$index\" class=\"{{app.isExternal ? 'external': ''}}\" v-for=\"app in apps\" @click=\"open(app.id)\">\n        <img :src=\"app.icon\">{{app.name}}\n      </li>\n    </ul>\n  </div>\n</template>\n\n<script>\n  import Menu from '../js/menu.js';\n  var WindowManager = require('../js/window_manager');\n  export default {\n    data () {\n      return {\n        menuState: Menu.state,\n        apps: WindowManager.appData\n      }\n    },\n    methods: {\n      close () {\n        this.menuState.show = false;\n      },\n      open (id) {\n        console.log(id);\n        WindowManager.open(id);\n        this.menuState.show = false;\n      }\n    }\n  }\n</script>\n\n<style>\n  #menu li.external:hover {\n    box-shadow: 0px 3px 0px #37B37F;\n  }\n</style>\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11182,24 +11240,24 @@
 	};
 
 /***/ },
-/* 40 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "\n<div id=\"menu\" v-if=\"menuState.show\">\n  <h1>Apps <img @click=\"close()\" src=\"" + __webpack_require__(41) + "\"></h1>\n  <ul>\n    <li track-by=\"$index\" class=\"{{app.isExternal ? 'external': ''}}\" v-for=\"app in apps\" @click=\"open(app.id)\">\n      <img :src=\"app.icon\">{{app.name}}\n    </li>\n  </ul>\n</div>\n";
+	module.exports = "\n<div id=\"menu\" v-if=\"menuState.show\">\n  <h1>Apps <img @click=\"close()\" src=\"" + __webpack_require__(43) + "\"></h1>\n  <ul>\n    <li track-by=\"$index\" class=\"{{app.isExternal ? 'external': ''}}\" v-for=\"app in apps\" @click=\"open(app.id)\">\n      <img :src=\"app.icon\">{{app.name}}\n    </li>\n  </ul>\n</div>\n";
 
 /***/ },
-/* 41 */
+/* 43 */
 /***/ function(module, exports) {
 
 	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAgAElEQVRoBQEwJM/bAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADg4OAK+fn5mfz8/PX8/Pz3+vr6nePj4wwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANXV1QT5+fmF/Pz88fz8/Pn6+vqt6urqFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+fn5mf/////////////////////6+vrB5OTkDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANfX1wT4+Pip//////////////////////r6+r0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPz8/PX///////////////////////////r6+sHk5OQMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANjY2AT4+Pip///////////////////////////+/v7/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD8/Pz3////////////////////////////////+vr6weTk5AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANnZ2QT4+Pip/////////////////////////////////v7+/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+vr6nf/////////////////////////////////////6+vrB5OTkDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANnZ2QT4+Pip//////////////////////////////////////r6+sEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOXl5Qz6+vrD//////////////////////////////////////r6+sHk5OQMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANra2gT4+Pip//////////////////////////////////////v7+9fs7OwYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA5+fnDPr6+sP/////////////////////////////////////+vr6weXl5QwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANra2gT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADn5+cO+vr6w//////////////////////////////////////6+vrB5eXlDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANvb2wT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOfn5w76+vrD//////////////////////////////////////r6+sHl5eUMAAAAAAAAAAAAAAAAAAAAANvb2wT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6OjoDvr6+sP/////////////////////////////////////+vr6weXl5QwAAAAAAAAAANvb2wT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADo6OgO+vr6w//////////////////////////////////////6+vrB5eXlDNvb2wT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOjo6A76+vrD//////////////////////////////////////r6+sH4+Pir//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6OjoDvr6+sP///////////////////////////////////////////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADo6OgO+vr6w/////////////////////////////////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOjo6A76+vrD//////////////////////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6OjoDvr6+sP///////////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANvb2wT4+Pir///////////////////////////////////////////6+vrD5eXlDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANvb2wT4+Pip//////////////////////////////////////////////////////r6+sHl5eUMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANvb2wT4+Pip////////////////////////////////////////////////////////////////+vr6weXl5QwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANvb2wT4+Pip///////////////////////////////////////////////////////////////////////////6+vrB5eXlDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANra2gT4+Pip//////////////////////////////////////v7+9f6+vrF//////////////////////////////////////r6+sHl5eUMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANra2gT4+Pip//////////////////////////////////////v7+9ft7e0a6OjoDvr6+sP/////////////////////////////////////+vr6weTk5AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANnZ2QT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAADo6OgO+vr6w//////////////////////////////////////6+vrB5OTkDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANnZ2QT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAOjo6A76+vrD//////////////////////////////////////r6+sHk5OQMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANjY2AT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6OjoDvr6+sP/////////////////////////////////////+vr6weTk5AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANfX1wT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADo6OgO+vr6w//////////////////////////////////////6+vrB5OTkDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANXV1QT4+Pip//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOjo6A76+vrD//////////////////////////////////////r6+sHj4+MMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD5+fmF//////////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6OjoDvr6+sP/////////////////////////////////////+vr6qQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/Pz88f////////////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADn5+cO+vr6w/////////////////////////////////7+/v8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPz8/Pn///////////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOfn5w76+vrD///////////////////////////+/v7/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD6+vqt//////////////////////v7+9ft7e0aAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA5+fnDPr6+sP/////////////////////+/v70QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA6urqFvr6+r3+/v7//v7+//r6+sHs7OwYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADn5+cM+vr6qf7+/v/+/v7/+/v70fDw8CYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMokCMYAAAQ7SURBVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARWKC+bnqqXcAAAAASUVORK5CYII="
 
 /***/ },
-/* 42 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var remote = __webpack_require__(43);
+	var remote = __webpack_require__(45);
 	var debug = __webpack_require__(3)();
-	var $ = __webpack_require__(44);
+	var $ = __webpack_require__(46);
 	
 	module.exports = {};
 	module.exports.load = function load(callback) {
@@ -11237,7 +11295,7 @@
 	})();
 
 /***/ },
-/* 43 */
+/* 45 */
 /***/ function(module, exports) {
 
 	var remote = {};
@@ -11269,7 +11327,7 @@
 	module.exports = remote;
 
 /***/ },
-/* 44 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -20485,13 +20543,13 @@
 
 
 /***/ },
-/* 45 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(46)
-	__vue_script__ = __webpack_require__(48)
-	__vue_template__ = __webpack_require__(58)
+	__webpack_require__(48)
+	__vue_script__ = __webpack_require__(50)
+	__vue_template__ = __webpack_require__(60)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
@@ -20508,13 +20566,13 @@
 	})()}
 
 /***/ },
-/* 46 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(47);
+	var content = __webpack_require__(49);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(22)(content, {});
@@ -20534,7 +20592,7 @@
 	}
 
 /***/ },
-/* 47 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(8)();
@@ -20548,7 +20606,7 @@
 
 
 /***/ },
-/* 48 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20561,11 +20619,11 @@
 	
 	var _window_manager2 = _interopRequireDefault(_window_manager);
 	
-	var _channel = __webpack_require__(49);
+	var _channel = __webpack_require__(51);
 	
 	var _channel2 = _interopRequireDefault(_channel);
 	
-	var _fileExplorer = __webpack_require__(53);
+	var _fileExplorer = __webpack_require__(55);
 	
 	var _fileExplorer2 = _interopRequireDefault(_fileExplorer);
 	
@@ -20596,14 +20654,14 @@
 	};
 
 /***/ },
-/* 49 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// channel for each window
-	var Channel = __webpack_require__(50);
-	var $ = __webpack_require__(44);
+	var Channel = __webpack_require__(52);
+	var $ = __webpack_require__(46);
 	var WindowManager = __webpack_require__(24);
-	var clientAPI = __webpack_require__(51);
+	var clientAPI = __webpack_require__(53);
 	var channels = {};
 	
 	function CreateChannel(index) {
@@ -20632,7 +20690,7 @@
 	module.exports.channels = channels;
 
 /***/ },
-/* 50 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -21396,12 +21454,12 @@
 
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// API available to apps
 	var WindowManager = __webpack_require__(24);
-	var FileExplorer = __webpack_require__(52);
+	var FileExplorer = __webpack_require__(54);
 	
 	module.exports = {
 	  open(params) {
@@ -21506,10 +21564,10 @@
 	};
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $ = __webpack_require__(44);
+	var $ = __webpack_require__(46);
 	
 	function FileExplorer(app, cb) {
 	  var self = this;
@@ -21534,13 +21592,13 @@
 	module.exports = FileExplorer;
 
 /***/ },
-/* 53 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __vue_script__, __vue_template__
-	__webpack_require__(54)
-	__vue_script__ = __webpack_require__(56)
-	__vue_template__ = __webpack_require__(57)
+	__webpack_require__(56)
+	__vue_script__ = __webpack_require__(58)
+	__vue_template__ = __webpack_require__(59)
 	module.exports = __vue_script__ || {}
 	if (module.exports.__esModule) module.exports = module.exports.default
 	if (__vue_template__) { (typeof module.exports === "function" ? module.exports.options : module.exports).template = __vue_template__ }
@@ -21557,13 +21615,13 @@
 	})()}
 
 /***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(55);
+	var content = __webpack_require__(57);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(22)(content, {});
@@ -21583,7 +21641,7 @@
 	}
 
 /***/ },
-/* 55 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(8)();
@@ -21597,7 +21655,7 @@
 
 
 /***/ },
-/* 56 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21606,7 +21664,7 @@
 	  value: true
 	});
 	
-	var _remote = __webpack_require__(43);
+	var _remote = __webpack_require__(45);
 	
 	var _remote2 = _interopRequireDefault(_remote);
 	
@@ -21644,62 +21702,22 @@
 	};
 
 /***/ },
-/* 57 */
+/* 59 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<div id=\"filePicker\" class=\"content\">\n  <div v-if=\"$loadingAsyncData\">Loading...</div>\n  <div v-if=\"!$loadingAsyncData\">\n    <iframe @load=\"createChannel\" class=\"file-picker-iframe\" :src=\"baseURL + fileSystems[selectedFileSystem].url + '?filePicker=file&type=*'\"></iframe>\n  </div>\n</div>\n";
 
 /***/ },
-/* 58 */
+/* 60 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<div id=\"desktop\">\n  <div v-for=\"window in windows\" class=\"window\" v-show=\"!window.minimized\" :style=\"{zIndex: window.zIndex}\">\n    <iframe v-if=\"window.running\" class=\"content\" @load=\"buildChannel($index)\" :src=\"window.url\"\n            data-name=\"{{window.title}}\"></iframe>\n    <div class=\"popup\" v-if=\"window.popups\" v-for=\"popup in window.popups\">\n      <component :popup=\"popup\" :is=\"popup.component\"></component>\n    </div>\n  </div>\n  <div id=\"appNotifications\"></div>\n</div>\n";
 
 /***/ },
-/* 59 */
+/* 61 */
 /***/ function(module, exports) {
 
 	module.exports = "\n<h1>App</h1>\n<div v-if=\"!ready\" transition=\"fade\">\n  <load-screen></load-screen>\n</div>\n\n<menu></menu>\n<taskbar></taskbar>\n<desktop></desktop>\n\n";
-
-/***/ },
-/* 60 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(61);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(22)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-1e37bd0a&file=menu.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./menu.vue", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js?sourceMap!./../../node_modules/vue-loader/lib/style-rewriter.js?id=_v-1e37bd0a&file=menu.vue!./../../node_modules/vue-loader/lib/selector.js?type=style&index=0!./menu.vue");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 61 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(8)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "\n#menu li.external:hover {\n  box-shadow: 0px 3px 0px #37B37F;\n}\n", "", {"version":3,"sources":["/./public/components/menu.vue?eac3b7b6"],"names":[],"mappings":";AAmCA;EACA,gCAAA;CACA","file":"menu.vue","sourcesContent":["<template>\n  <div id=\"menu\" v-if=\"menuState.show\">\n    <h1>Apps <img @click=\"close()\" src=\"../img/Close-48.png\"></h1>\n    <ul>\n      <li track-by=\"$index\" class=\"{{app.isExternal ? 'external': ''}}\" v-for=\"app in apps\" @click=\"open(app.id)\">\n        <img :src=\"app.icon\">{{app.name}}\n      </li>\n    </ul>\n  </div>\n</template>\n\n<script>\n  import Menu from '../js/menu.js';\n  var WindowManager = require('../js/window_manager');\n  export default {\n    data () {\n      return {\n        menuState: Menu.state,\n        apps: WindowManager.appData\n      }\n    },\n    methods: {\n      close () {\n        this.menuState.show = false;\n      },\n      open (id) {\n        console.log(id);\n        WindowManager.open(id);\n        this.menuState.show = false;\n      }\n    }\n  }\n</script>\n\n<style>\n  #menu li.external:hover {\n    box-shadow: 0px 3px 0px #37B37F;\n  }\n</style>\n"],"sourceRoot":"webpack://"}]);
-	
-	// exports
-
 
 /***/ }
 /******/ ]);
