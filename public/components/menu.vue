@@ -33,6 +33,9 @@
 </script>
 
 <style>
+  #menu {
+    box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.40);
+  }
   #menu li.external:hover {
     box-shadow: 0px 3px 0px #37B37F;
   }
