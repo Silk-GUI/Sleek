@@ -53,9 +53,9 @@
 
 <style>
   #taskBar {
-    background-color: rgba(255, 255, 255, 0.33);
+    background-color: rgba(53, 115, 121, 0.76);
     border-top: none;
-
+    box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.75);
   }
   #taskBar .app {
     min-width: 50px;
