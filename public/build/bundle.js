@@ -23255,7 +23255,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n.file-picker-iframe {\r\n  height: 300px;\r\n  width: 500px;\r\n}\r\n", "", {"version":3,"sources":["/./public/components/fileExplorer.vue?b63e77da"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AA+CA;EACA,cAAA;EACA,aAAA;CACA","file":"fileExplorer.vue","sourcesContent":["<template>\r\n  <div id=\"filePicker\" class=\"content\">\r\n    <div v-if=\"$loadingAsyncData\">Loading...</div>\r\n    <div v-if=\"!$loadingAsyncData\">\r\n      <iframe @load=\"createChannel\" class=\"file-picker-iframe\" :src=\"baseURL + fileSystems[selectedFileSystem].url + '?filePicker=file&type=*'\"></iframe>\r\n    </div>\r\n  </div>\r\n</template>\r\n\r\n<script>\r\n\r\n  import Remote from '../js/remote.js';\r\n  export default {\r\n    data () {\r\n      var baseURL = 'http://localhost:3000/';\r\n//      if(Remote.isRemote) {\r\n//        baseURL = Remote.fixURL('base', baseURL);\r\n//      }\r\n      console.log(baseURL);\r\n      return {\r\n        baseURL: baseURL,\r\n        fileSystems: [],\r\n        selectedFileSystem: 0\r\n      }\r\n    },\r\n    props: ['popup'],\r\n    asyncData: function (resolve, reject) {\r\n      DocumentHost.get('sleek/fileSystems')\r\n        .then(function (data) {\r\n          console.log('result', data);\r\n          resolve({\r\n            fileSystems: data\r\n          });\r\n        }, function (error) {\r\n          console.log('error', error);\r\n        });\r\n    },\r\n    methods: {\r\n      createChannel () {\r\n        this.popup.createChannel(this.$el);\r\n        console.log(this);\r\n      }\r\n    }\r\n  }\r\n</script>\r\n\r\n<style>\r\n.file-picker-iframe {\r\n  height: 300px;\r\n  width: 500px;\r\n}\r\n</style>\r\n"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n.file-picker-iframe {\r\n  height: 300px;\r\n  width: 500px;\r\n}\r\n", "", {"version":3,"sources":["/./public/components/fileExplorer.vue?db7b4efe"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAyCA;EACA,cAAA;EACA,aAAA;CACA","file":"fileExplorer.vue","sourcesContent":["<template>\r\n  <div id=\"filePicker\" class=\"content\">\r\n    <div v-if=\"$loadingAsyncData\">Loading...</div>\r\n    <div v-if=\"!$loadingAsyncData\">\r\n      <iframe @load=\"createChannel\" class=\"file-picker-iframe\" :src=\"fileSystems[selectedFileSystem].url + '?filePicker=file&type=*'\"></iframe>\r\n    </div>\r\n  </div>\r\n</template>\r\n\r\n<script>\r\n\r\n  import Remote from '../js/remote.js';\r\n  export default {\r\n    data () {\r\n      return {\r\n        fileSystems: [],\r\n        selectedFileSystem: 0\r\n      }\r\n    },\r\n    props: ['popup'],\r\n    asyncData: function (resolve, reject) {\r\n      DocumentHost.get('sleek/fileSystems')\r\n        .then(function (data) {\r\n          console.log('result', data);\r\n          resolve({\r\n            fileSystems: data\r\n          });\r\n        }, function (error) {\r\n          console.log('error', error);\r\n        });\r\n    },\r\n    methods: {\r\n      createChannel () {\r\n        this.popup.createChannel(this.$el);\r\n        console.log(this);\r\n      }\r\n    }\r\n  }\r\n</script>\r\n\r\n<style>\r\n.file-picker-iframe {\r\n  height: 300px;\r\n  width: 500px;\r\n}\r\n</style>\r\n"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -23278,11 +23278,7 @@
 	
 	exports.default = {
 	  data: function data() {
-	    var baseURL = 'http://localhost:3000/';
-	
-	    console.log(baseURL);
 	    return {
-	      baseURL: baseURL,
 	      fileSystems: [],
 	      selectedFileSystem: 0
 	    };
@@ -23311,7 +23307,7 @@
 /* 59 */
 /***/ function(module, exports) {
 
-	module.exports = "\n<div id=\"filePicker\" class=\"content\">\n  <div v-if=\"$loadingAsyncData\">Loading...</div>\n  <div v-if=\"!$loadingAsyncData\">\n    <iframe @load=\"createChannel\" class=\"file-picker-iframe\" :src=\"baseURL + fileSystems[selectedFileSystem].url + '?filePicker=file&type=*'\"></iframe>\n  </div>\n</div>\n";
+	module.exports = "\n<div id=\"filePicker\" class=\"content\">\n  <div v-if=\"$loadingAsyncData\">Loading...</div>\n  <div v-if=\"!$loadingAsyncData\">\n    <iframe @load=\"createChannel\" class=\"file-picker-iframe\" :src=\"fileSystems[selectedFileSystem].url + '?filePicker=file&type=*'\"></iframe>\n  </div>\n</div>\n";
 
 /***/ },
 /* 60 */

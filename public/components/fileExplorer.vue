@@ -2,7 +2,7 @@
   <div id="filePicker" class="content">
     <div v-if="$loadingAsyncData">Loading...</div>
     <div v-if="!$loadingAsyncData">
-      <iframe @load="createChannel" class="file-picker-iframe" :src="baseURL + fileSystems[selectedFileSystem].url + '?filePicker=file&type=*'"></iframe>
+      <iframe @load="createChannel" class="file-picker-iframe" :src="fileSystems[selectedFileSystem].url + '?filePicker=file&type=*'"></iframe>
     </div>
   </div>
 </template>
@@ -12,13 +12,7 @@
   import Remote from '../js/remote.js';
   export default {
     data () {
-      var baseURL = 'http://localhost:3000/';
-//      if(Remote.isRemote) {
-//        baseURL = Remote.fixURL('base', baseURL);
-//      }
-      console.log(baseURL);
       return {
-        baseURL: baseURL,
         fileSystems: [],
         selectedFileSystem: 0
       }
